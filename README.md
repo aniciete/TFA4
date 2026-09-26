@@ -1,7 +1,7 @@
-# Point-of-Sale (POS) Database
+# Point-of-Sale (POS) Database & Management System
 
 **Course:** IT0049 (Web System Technologies)  
-**Assessment:** Technical Formative Assessment 3 (TFA3)  
+**Assessment:** Technical Formative Assessment 3 (TFA3) — Forms, Validation, and File Upload  
 **Framework:** CodeIgniter 4 (v4.7.4)  
 **Hosted Application:** [https://tfa3.freedev.app](https://tfa3.freedev.app)  
 **GitHub Repository:** [https://github.com/aniciete/TFA3](https://github.com/aniciete/TFA3)  
@@ -10,23 +10,38 @@
 
 ## 1. Project Overview
 
-This project provides the Point-of-Sale (POS) application foundation backed by a relational MySQL database. CodeIgniter 4 Models wrap the database tables and leverage Query Builder methods (`findAll()`, `orderBy()`) to retrieve data cleanly without writing raw SQL.
+This project extends the Point-of-Sale (POS) application with record creation and editing workflows, robust server-side validation, and user avatar image processing. Built strictly following CodeIgniter 4 MVC architecture, database persistence uses CodeIgniter 4 Models and the Query Builder without raw SQL, and all user input is sanitized before output with `esc()`.
 
 ### Required Pages and Route Table
 
-| URL Route | Controller Action | Model Used | View Template | Purpose |
-| :--- | :--- | :--- | :--- | :--- |
-| `/` | `App\Controllers\Pages::home` | N/A | `pages/home.php` | POS application landing page with architectural overview and quick links |
-| `/about` | `App\Controllers\Pages::about` | N/A | `pages/about.php` | Operational procedure and database model architecture overview |
-| `/customers` | `App\Controllers\Customers::index` | `CustomerModel` | `customers/index.php` | Customer accounts directory listing full name, email, phone, and record count |
-| `/users` | `App\Controllers\Users::index` | `UserModel` | `users/index.php` | Staff user accounts directory listing username, full name, and created date |
+| URL Route | Method | Controller Action | Model Used | View Template | Purpose |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| `/` | `GET` | `App\Controllers\Pages::home` | `CustomerModel`, `UserModel` | `pages/home.php` | POS application landing page with live record counters and navigation |
+| `/about` | `GET` | `App\Controllers\Pages::about` | N/A | `pages/about.php` | Operational procedure and database model architecture overview |
+| `/customers` | `GET` | `App\Controllers\Customers::index` | `CustomerModel` | `customers/index.php` | Customer directory listing records with links to create and edit accounts |
+| `/customers/new` | `GET` | `App\Controllers\Customers::new` | `CustomerModel` | `customers/form.php` | Renders blank form to register a new customer account |
+| `/customers/new` | `POST` | `App\Controllers\Customers::create` | `CustomerModel` | `customers/form.php` | Validates and inserts new customer record; redirects with flash message |
+| `/customers/edit/(:num)` | `GET` | `App\Controllers\Customers::edit` | `CustomerModel` | `customers/form.php` | Renders edit form pre-populated with customer record; 404 if missing |
+| `/customers/edit/(:num)` | `POST` | `App\Controllers\Customers::update` | `CustomerModel` | `customers/form.php` | Validates and updates existing customer record; preserves `created_at` |
+| `/users` | `GET` | `App\Controllers\Users::index` | `UserModel` | `users/index.php` | User directory listing accounts with avatar thumbnails, usernames, and edit links |
+| `/users/new` | `GET` | `App\Controllers\Users::new` | `UserModel` | `users/form.php` | Renders blank multipart form for creating staff user account with avatar |
+| `/users/new` | `POST` | `App\Controllers\Users::create` | `UserModel` | `users/form.php` | Validates data, processes avatar upload/resize, and inserts user account |
+| `/users/edit/(:num)` | `GET` | `App\Controllers\Users::edit` | `UserModel` | `users/form.php` | Renders edit multipart form pre-populated with user data and avatar preview |
+| `/users/edit/(:num)` | `POST` | `App\Controllers\Users::update` | `UserModel` | `users/form.php` | Validates, updates user record, and replaces or preserves avatar image |
 
 ---
 
 ## 2. Technical Stack & Prerequisites
 
 - **Language:** PHP 8.2 or higher (tested on PHP 8.5)
-- **Required PHP Extensions:** `intl`, `mbstring`, `json`, `curl`, `mysqli`, `pdo_sqlite` (for PHPUnit)
+- **Required PHP Extensions:**
+  - `intl` (internationalization)
+  - `mbstring` (multibyte string handling)
+  - `json` (data encoding)
+  - `curl` (HTTP requests)
+  - `mysqli` (MySQL database connection)
+  - `gd` (image processing and avatar resizing)
+  - `pdo_sqlite` (for PHPUnit in-memory test database)
 - **Package Manager:** Composer 2.x
 - **Framework:** CodeIgniter 4.7.4
 - **Database:** MySQL 8.x / MariaDB 10.x (Local & Production), SQLite3 (in-memory for automated tests)
@@ -35,9 +50,9 @@ This project provides the Point-of-Sale (POS) application foundation backed by a
 
 ## 3. Database Schema & Setup
 
-The database schema and sample records are defined in [`database/tfa3_pos.sql`](database/tfa3_pos.sql):
+The database schema and sample records are defined in [`database/tfa3_pos.sql`](database/tfa3_pos.sql) and mirrored in CodeIgniter database migrations in [`app/Database/Migrations/`](app/Database/Migrations/).
 
-### 3.1 Schemas
+### 3.1 Relational Schemas
 
 ```sql
 CREATE TABLE customers (
@@ -52,6 +67,7 @@ CREATE TABLE users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) NOT NULL UNIQUE,
   full_name VARCHAR(100) NOT NULL,
+  avatar VARCHAR(255) NULL,
   created_at DATETIME NOT NULL
 );
 ```
@@ -69,6 +85,12 @@ Or via phpMyAdmin / GUI:
 2. Click **Import**.
 3. Choose `database/tfa3_pos.sql`.
 4. Click **Go**.
+
+Alternatively, run database migrations and seeders via Spark:
+```bash
+php spark migrate
+php spark db:seed Tfa3Seeder
+```
 
 ---
 
@@ -107,7 +129,14 @@ database.default.DBPrefix =
 database.default.port = 3306
 ```
 
-### 4.4 Start the Local Development Server
+### 4.4 Avatar Storage Permissions
+Ensure the avatar upload directory exists and is writable:
+```bash
+mkdir -p public/uploads/avatars
+chmod 755 public/uploads/avatars
+```
+
+### 4.5 Start the Local Development Server
 ```bash
 php spark serve
 ```
@@ -117,32 +146,60 @@ Access the application locally at: **[http://localhost:8080](http://localhost:80
 
 ## 5. Architectural & Data Design
 
-### 5.1 Models and Query Builder
-In accordance with POS specifications:
-- `App\Models\CustomerModel`:
-  - Maps to table `customers`.
-  - Primary key: `id`.
-  - Return type: `array`.
+### 5.1 Models and Validation Rules
+
+In accordance with CodeIgniter 4 best practices, models encapsulate table metadata, allowed fields, and validation rules:
+
+- **`App\Models\CustomerModel`**:
+  - Table: `customers`, Primary Key: `id`.
   - Allowed fields: `full_name`, `email`, `phone`, `created_at`.
-- `App\Models\UserModel`:
-  - Maps to table `users`.
-  - Primary key: `id`.
-  - Return type: `array`.
-  - Allowed fields: `username`, `full_name`, `created_at`.
+  - Rules:
+    - `full_name`: `required|min_length[2]|max_length[100]`
+    - `email`: `required|max_length[100]|valid_email`
+    - `phone`: `permit_empty|max_length[20]`
 
-### 5.2 Controllers
-Controllers instantiate models and fetch data using Query Builder methods without raw SQL:
-- `Customers::index()`:
-  ```php
-  $customers = (new CustomerModel())->orderBy('id', 'ASC')->findAll();
-  ```
-- `Users::index()`:
-  ```php
-  $users = (new UserModel())->orderBy('id', 'ASC')->findAll();
-  ```
+- **`App\Models\UserModel`**:
+  - Table: `users`, Primary Key: `id`.
+  - Allowed fields: `username`, `full_name`, `avatar`, `created_at`.
+  - Rules:
+    - `full_name`: `required|min_length[2]|max_length[100]`
+    - `username`: `required|min_length[3]|max_length[50]|is_unique[users.username,id,{id}]`
+    - `avatar`: `permit_empty|max_length[255]`
 
-### 5.3 Views & Sanitization
-Views receive `$customers` and `$users` arrays, iterating over records using PHP `foreach` and sanitizing all output with `esc()` to prevent XSS.
+### 5.2 Server-Side Validation & Form Handling
+
+- **Dual-Layer Validation:** Inputs are validated at both the controller layer (providing immediate redirect back with input and field error mapping) and the model layer (preventing invalid persistence).
+- **Error Feedback:** Form views render both a high-level error summary banner at the top of the card and inline contextual error messages beneath offending input fields.
+- **Input Preservation:** Forms use `old('field_name', $fallback)` to preserve user-entered values upon validation rejection, preventing data loss.
+- **Record Preservation:**
+  - `created_at` timestamp is generated strictly on record creation (`create()`) using `date('Y-m-d H:i:s')`.
+  - When updating (`update()`), existing `created_at` timestamps are never modified.
+
+### 5.3 User Avatar Upload & Processing
+
+- **Multipart Encoding:** Forms handling avatars declare `enctype="multipart/form-data"`.
+- **Validation Constraints:**
+  - Avatar upload is strictly optional on both create and edit.
+  - Allowed MIME types: `image/jpg`, `image/jpeg`, `image/png`.
+  - File extension check: `is_image[avatar]`.
+  - Maximum upload size: `2048 KB` (2 MB).
+- **Storage & Security:**
+  - Files are stored with cryptographically secure random names generated via `$file->getRandomName()`.
+  - Target directory: `public/uploads/avatars/`. Direct execution of uploaded scripts is prevented.
+- **Image Resizing:**
+  - Uploaded images are resized on the server using CodeIgniter's Image Service (`service('image')`) powered by the PHP GD extension:
+    ```php
+    service('image')
+        ->withFile($savedFilePath)
+        ->resize(256, 256, true, 'auto')
+        ->save($savedFilePath);
+    ```
+  - Proportional aspect ratio is strictly maintained with auto-master dimension calculation.
+- **Edit Behavior:**
+  - Uploading a new image during edit updates the record to point to the newly resized file.
+  - Submitting the edit form without selecting a new file preserves the existing avatar.
+- **Fallback Placeholder:**
+  - If a user has no avatar set (`avatar` is null or the file does not exist on disk), the UI renders an artisan SVG placeholder (`/assets/images/avatar-placeholder.svg`).
 
 ---
 
@@ -154,11 +211,24 @@ Automated testing uses CodeIgniter's in-memory SQLite test connection (`:memory:
 vendor/bin/phpunit
 ```
 
-The test suite validates:
-- System and path health (`HealthTest`).
-- Model data retrieval, primary keys, schema field constraints, and absence of deprecated role columns (`ModelsTest`).
-- HTTP 200 responses across all four routes with database-backed record rendering (`PosFoundationsTest`).
-- Strict 404 routing enforcement when auto-routing is disabled.
+The test suite consists of 40 automated tests with 266 assertions:
+- **`HealthTest`**: Validates environment and critical framework paths.
+- **`ModelsTest`**: Validates model configuration, primary keys, allowed fields, schema rules, and duplicate/unique username handling on insert and update.
+- **`PosFoundationsTest`**: Validates landing page counters, about page, and static list pages.
+- **`CustomerWorkflowTest`**:
+  - Tests rendering of blank customer create form.
+  - Tests validation failure scenarios (empty inputs, invalid emails, length limits) and input preservation via `old()`.
+  - Tests successful customer creation, database persistence, and `created_at` generation.
+  - Tests edit form retrieval, record pre-population, and 404 handling on missing record IDs.
+  - Tests customer record update with preservation of the original `created_at` timestamp.
+- **`UserWorkflowTest`**:
+  - Tests rendering of blank user create form with multipart encoding.
+  - Tests validation failure scenarios (missing name, missing username, duplicate username) and input preservation.
+  - Tests unique username enforcement: allowing same username when updating own record, rejecting collisions with other users.
+  - Tests valid avatar upload: validates saving to `public/uploads/avatars/`, verifies aspect-ratio-preserving resize to max 256×256 pixels.
+  - Tests avatar validation rejections: non-image files and files exceeding 2 MB.
+  - Tests avatar preservation when updating user text attributes without providing a replacement image.
+  - Tests 404 handling on edit/update requests targeting non-existent user IDs.
 
 ---
 
@@ -184,4 +254,5 @@ This repository includes an automated packaging script for InfinityFree Apache h
    database.default.username = if0_XXXXXX
    database.default.password = your_vpanel_password
    ```
-7. Verify the live site at: **[https://tfa3.freedev.app](https://tfa3.freedev.app)**.
+7. Verify permissions on `public/uploads/avatars/` to ensure the web server can store uploaded images.
+8. Verify the live site at: **[https://tfa3.freedev.app](https://tfa3.freedev.app)**.
