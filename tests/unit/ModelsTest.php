@@ -90,5 +90,35 @@ final class ModelsTest extends CIUnitTestCase
         $errors = $userModel->errors();
         $this->assertArrayHasKey('username', $errors);
     }
+
+    public function testUserModelUpdateAllowsSameUsernameForOwnRecord(): void
+    {
+        $userModel = new UserModel();
+
+        // User #1 is admin.reyes. Updating user #1 with same username should succeed.
+        $success = $userModel->update(1, [
+            'username'  => 'admin.reyes',
+            'full_name' => 'Carlos Reyes Modified',
+        ]);
+
+        $this->assertTrue($success);
+        $updated = $userModel->find(1);
+        $this->assertSame('Carlos Reyes Modified', $updated['full_name']);
+        $this->assertSame('admin.reyes', $updated['username']);
+    }
+
+    public function testUserModelUpdateRejectsDuplicateUsernameFromOtherRecord(): void
+    {
+        $userModel = new UserModel();
+
+        // User #2 is cashier.delacruz. Updating user #2 with user #1's username should fail.
+        $success = $userModel->update(2, [
+            'username'  => 'admin.reyes',
+            'full_name' => 'Maria Dela Cruz',
+        ]);
+
+        $this->assertFalse($success);
+    }
 }
+
 
