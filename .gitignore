@@ -47,5 +47,10 @@ tfa3-pages/
 /writable/uploads/*
 !/writable/uploads/index.html
 
+# User uploaded avatars
+/public/uploads/avatars/*
+!/public/uploads/avatars/index.html
+!/public/uploads/avatars/.gitkeep
+
 # Local Netlify folder
 .netlify
