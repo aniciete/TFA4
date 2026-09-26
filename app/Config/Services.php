@@ -28,4 +28,3 @@ class Services extends BaseService
         return new \App\Libraries\AvatarManager();
     }
 }
-

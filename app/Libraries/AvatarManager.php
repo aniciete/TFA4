@@ -88,4 +88,23 @@ class AvatarManager
 
         return base_url('assets/images/avatar-placeholder.svg');
     }
+
+    /**
+     * Hydrate a user record with avatar presentation data.
+     *
+     * @param array<string, mixed> $user
+     * @return array<string, mixed>
+     */
+    public function prepareUserAvatar(array $user): array
+    {
+        $hasAvatar = $this->avatarExists($user['avatar'] ?? null);
+
+        $user['has_avatar'] = $hasAvatar;
+        $user['avatar_url'] = $hasAvatar
+            ? base_url('uploads/avatars/' . $user['avatar'])
+            : base_url('assets/images/avatar-placeholder.svg');
+
+        return $user;
+    }
 }
+

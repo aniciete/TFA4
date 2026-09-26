@@ -62,4 +62,3 @@ class UserModel extends Model
         return parent::update($id, $row);
     }
 }
-
