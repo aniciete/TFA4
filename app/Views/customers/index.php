@@ -48,7 +48,7 @@
                         <td class="cell-email" data-label="Email Address"><a href="mailto:<?= esc($customer['email']) ?>" class="table-link"><?= esc($customer['email']) ?></a></td>
                         <td class="cell-mono tabular-num" data-label="Phone Number"><?= esc($customer['phone'] ?: '—') ?></td>
                         <td class="cell-actions" data-label="Actions">
-                            <a href="<?= site_url('customers/edit/' . $customer['id']) ?>" class="table-action-link">Edit</a>
+                            <a href="<?= esc(site_url('customers/edit/' . $customer['id']), 'attr') ?>" class="table-action-link">Edit</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

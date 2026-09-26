@@ -92,18 +92,13 @@
                 </label>
 
                 <?php if ($mode === 'edit'): ?>
-                    <?php
-                        $avatarManager   = service('avatarManager');
-                        $hasCustomAvatar = $avatarManager->avatarExists($user['avatar'] ?? null);
-                        $avatarUrl       = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
-                    ?>
                     <div class="avatar-preview-box">
-                        <img src="<?= esc($avatarUrl) ?>" 
-                             alt="<?= $hasCustomAvatar ? 'Current avatar' : 'Default avatar placeholder' ?>" 
-                             class="avatar-preview-img <?= $hasCustomAvatar ? '' : 'avatar-placeholder' ?>"
-                             onerror="this.onerror=null;this.src='<?= base_url('assets/images/avatar-placeholder.svg') ?>';">
+                        <img src="<?= esc($user['avatar_url'], 'attr') ?>" 
+                             alt="<?= $user['has_avatar'] ? 'Current avatar' : 'Default avatar placeholder' ?>" 
+                             class="avatar-preview-img <?= $user['has_avatar'] ? '' : 'avatar-placeholder' ?>"
+                             onerror="this.onerror=null;this.src='<?= esc(base_url('assets/images/avatar-placeholder.svg'), 'attr') ?>';">
                         <div class="avatar-preview-details">
-                            <?php if ($hasCustomAvatar): ?>
+                            <?php if ($user['has_avatar']): ?>
                                 <span class="avatar-preview-title">Current Avatar Assigned</span>
                                 <span class="avatar-preview-subtext"><?= esc($user['avatar']) ?></span>
                             <?php else: ?>

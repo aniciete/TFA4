@@ -43,29 +43,24 @@
             </thead>
             <tbody>
                 <?php foreach ($users as $index => $user): ?>
-                    <?php
-                        $avatarManager   = service('avatarManager');
-                        $hasCustomAvatar = $avatarManager->avatarExists($user['avatar'] ?? null);
-                        $avatarUrl       = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
-                    ?>
                     <tr class="ledger-row-item">
                         <td class="td-num" data-label="#"><?= sprintf('%02d', $index + 1) ?></td>
                         <td class="cell-avatar" data-label="Avatar">
                             <div class="avatar-thumb-wrapper">
-                                <img src="<?= esc($avatarUrl) ?>" 
-                                     alt="<?= esc($user['full_name']) ?> avatar" 
-                                     class="avatar-thumb <?= $hasCustomAvatar ? '' : 'avatar-placeholder' ?>" 
+                                <img src="<?= esc($user['avatar_url'], 'attr') ?>" 
+                                     alt="<?= esc($user['full_name'], 'attr') ?> avatar" 
+                                     class="avatar-thumb <?= $user['has_avatar'] ? '' : 'avatar-placeholder' ?>" 
                                      width="40" 
                                      height="40" 
                                      loading="lazy"
-                                     onerror="this.onerror=null;this.src='<?= base_url('assets/images/avatar-placeholder.svg') ?>';">
+                                     onerror="this.onerror=null;this.src='<?= esc(base_url('assets/images/avatar-placeholder.svg'), 'attr') ?>';">
                             </div>
                         </td>
                         <td class="cell-mono tabular-num" data-label="Username"><?= esc($user['username']) ?></td>
                         <td class="cell-primary" data-label="Full Name"><?= esc($user['full_name']) ?></td>
                         <td class="cell-mono tabular-num" data-label="Created At"><?= esc($user['created_at']) ?></td>
                         <td class="cell-actions" data-label="Actions">
-                            <a href="<?= site_url('users/edit/' . $user['id']) ?>" class="table-action-link">Edit</a>
+                            <a href="<?= esc(site_url('users/edit/' . $user['id']), 'attr') ?>" class="table-action-link">Edit</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
