@@ -51,7 +51,7 @@ rm -rf "$TMP_DIR"
 
 # Validate package integrity
 echo "==> Verifying package contents..."
-for req in "public/index.php" ".htaccess" "public/.htaccess" "vendor/autoload.php" ".env" "database/tfa3_pos.sql"; do
+for req in "public/index.php" ".htaccess" "public/.htaccess" "vendor/autoload.php" ".env" "database/tfa3_pos.sql" "public/uploads/avatars/index.html" "public/assets/images/avatar-placeholder.svg"; do
     if ! unzip -l "$OUTPUT_ZIP" | grep -q "$req"; then
         echo "Error: Required file $req is missing from $OUTPUT_ZIP" >&2
         exit 1
