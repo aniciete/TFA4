@@ -26,14 +26,14 @@
         </div>
         <ul class="facts-list" role="list">
             <li class="fact-item">
-                <span class="fact-num">05</span>
+                <span class="fact-num"><?= sprintf('%02d', (int) ($customerCount ?? 0)) ?></span>
                 <div class="fact-details">
                     <strong class="fact-label">Registered Customers</strong>
                     <span class="fact-desc">Active retail and commercial accounts</span>
                 </div>
             </li>
             <li class="fact-item">
-                <span class="fact-num">05</span>
+                <span class="fact-num"><?= sprintf('%02d', (int) ($userCount ?? 0)) ?></span>
                 <div class="fact-details">
                     <strong class="fact-label">Authorized Staff</strong>
                     <span class="fact-desc">Active store operator and staff accounts</span>
@@ -54,7 +54,7 @@
         <article class="directory-card card-customers">
             <div class="card-meta">
                 <span class="module-number">Retail Directory</span>
-                <span class="record-pill">5 Records</span>
+                <span class="record-pill"><?= (int) ($customerCount ?? 0) ?> Records</span>
             </div>
             <div class="card-header">
                 <div class="card-symbol" aria-hidden="true">
@@ -81,7 +81,7 @@
         <article class="directory-card card-users">
             <div class="card-meta">
                 <span class="module-number">Staff Directory</span>
-                <span class="record-pill">5 Users</span>
+                <span class="record-pill"><?= (int) ($userCount ?? 0) ?> Users</span>
             </div>
             <div class="card-header">
                 <div class="card-symbol" aria-hidden="true">

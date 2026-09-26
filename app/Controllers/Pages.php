@@ -2,13 +2,21 @@
 
 namespace App\Controllers;
 
+use App\Models\CustomerModel;
+use App\Models\UserModel;
+
 class Pages extends BaseController
 {
     public function home(): string
     {
+        $customerCount = (new CustomerModel())->countAllResults();
+        $userCount     = (new UserModel())->countAllResults();
+
         return view('pages/home', [
-            'title'      => 'Home | POS Database',
-            'activePage' => 'home',
+            'title'         => 'Home | POS Database',
+            'activePage'    => 'home',
+            'customerCount' => $customerCount,
+            'userCount'     => $userCount,
         ]);
     }
 
