@@ -1,0 +1,50 @@
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Other projects in workspace
+webdes/
+
+# Environment Configuration
+.env
+.env.*
+!.env.example*
+!env*
+
+# Assignment and Coursework Documents
+*.docx
+*.doc
+*.pdf
+
+# Internal Planning & Development Notes
+*PLAN*.md
+*_PLAN.md
+
+# Build, Test, and Archive Artifacts
+/build/
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+.phpunit.result.cache
+
+# CodeIgniter 4 standard ignores
+/vendor/
+/writable/cache/*
+!/writable/cache/index.html
+/writable/debugbar/*
+!/writable/debugbar/index.html
+/writable/logs/*
+!/writable/logs/index.html
+/writable/session/*
+!/writable/session/index.html
+/writable/uploads/*
+!/writable/uploads/index.html
+
+# Local Netlify folder
+.netlify
