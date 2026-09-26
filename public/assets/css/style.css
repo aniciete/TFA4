@@ -1551,7 +1551,383 @@ img, svg {
 }
 
 /* --------------------------------------------------------------------------
-   13. Reduced Motion
+   13. Forms, Validation, Alerts & Avatars
+   -------------------------------------------------------------------------- */
+
+/* Flash Alerts */
+.flash-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1.25rem;
+    margin-bottom: 1.5rem;
+    border-radius: 4px;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+    border: 1px solid transparent;
+}
+
+.flash-success {
+    background-color: var(--sage-surface);
+    border-color: var(--sage-border);
+    color: var(--basil-dark);
+}
+
+.flash-danger {
+    background-color: var(--tomato-surface);
+    border-color: rgba(201, 76, 56, 0.25);
+    color: var(--tomato);
+}
+
+.flash-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    background-color: currentColor;
+    color: var(--cream-surface);
+    flex-shrink: 0;
+}
+
+/* Directory Actions Bar */
+.directory-actions-bar {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+/* Table Actions & Links */
+.th-actions {
+    text-align: center;
+    width: 90px;
+}
+
+.cell-actions {
+    text-align: center;
+    white-space: nowrap;
+}
+
+.table-action-link {
+    display: inline-block;
+    padding: 0.25rem 0.625rem;
+    background-color: var(--cream-subtle);
+    border: 1px solid var(--cream-border);
+    border-radius: 3px;
+    color: var(--basil);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.table-action-link:hover {
+    background-color: var(--basil);
+    border-color: var(--basil);
+    color: var(--text-inverse);
+}
+
+/* Avatar in Table */
+.th-avatar {
+    width: 60px;
+    text-align: center;
+}
+
+.cell-avatar {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.avatar-thumb-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+    background-color: var(--cream-subtle);
+    border: 1px solid var(--cream-border);
+}
+
+.avatar-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Form Layout & Cards */
+.form-page-container {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.form-card-ledger {
+    background-color: var(--cream-surface);
+    border: 1px solid var(--cream-border);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(23, 60, 42, 0.04);
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+
+.form-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.875rem 1.5rem;
+    background-color: var(--cream-subtle);
+    border-bottom: 1px solid var(--cream-border);
+}
+
+.form-card-title {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    color: var(--basil);
+    letter-spacing: -0.01em;
+}
+
+.form-card-docket {
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: var(--sage);
+    text-transform: uppercase;
+}
+
+.ledger-form {
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* Form Groups & Inputs */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--basil-dark);
+}
+
+.req-star {
+    color: var(--tomato);
+    font-weight: 700;
+}
+
+.optional-tag {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--text-muted);
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    font-family: inherit;
+    font-size: 0.9375rem;
+    color: var(--text-primary);
+    background-color: var(--cream-surface);
+    border: 1.5px solid var(--cream-border);
+    border-radius: 4px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--basil);
+    box-shadow: 0 0 0 3px rgba(23, 60, 42, 0.12);
+}
+
+.form-file-input {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    padding: 0.5rem;
+    background-color: var(--cream-bg);
+    border: 1.5px dashed var(--cream-border);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.form-file-input:focus {
+    outline: none;
+    border-color: var(--basil);
+}
+
+.field-help-text {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+    margin: 0;
+    line-height: 1.35;
+}
+
+.field-error-msg {
+    font-size: 0.8125rem;
+    color: var(--tomato);
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.35;
+}
+
+.has-error .form-input,
+.has-error .form-file-input {
+    border-color: var(--tomato);
+    background-color: #fff9f8;
+}
+
+.has-error .form-input:focus {
+    box-shadow: 0 0 0 3px rgba(201, 76, 56, 0.15);
+}
+
+/* Error Summary Banner */
+.form-error-summary {
+    background-color: var(--tomato-surface);
+    border: 1px solid rgba(201, 76, 56, 0.3);
+    border-radius: 4px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.summary-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--tomato);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    margin-bottom: 0.5rem;
+}
+
+.summary-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background-color: var(--tomato);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.summary-list {
+    margin: 0;
+    padding-left: 1.5rem;
+    color: #8c2a1a;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+/* Avatar Preview Card on Edit */
+.avatar-preview-box {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background-color: var(--cream-bg);
+    border: 1px solid var(--cream-border);
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+}
+
+.avatar-preview-img {
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    object-fit: cover;
+    border: 1px solid var(--sage-border);
+    background-color: var(--cream-surface);
+    flex-shrink: 0;
+}
+
+.avatar-preview-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.avatar-preview-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--basil);
+}
+
+.avatar-preview-subtext {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Form Actions Row */
+.form-meta-note {
+    display: flex;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    padding: 0.5rem 0.75rem;
+    background-color: var(--cream-subtle);
+    border-radius: 3px;
+    border-left: 3px solid var(--sage);
+}
+
+.meta-label {
+    font-weight: 600;
+}
+
+.form-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    margin-top: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--cream-border);
+}
+
+.button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.25rem;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--basil);
+    background-color: var(--cream-subtle);
+    border: 1px solid var(--cream-border);
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.button-secondary:hover {
+    background-color: #ebdcb9;
+    border-color: #d1c098;
+    color: var(--basil-dark);
+}
+
+/* --------------------------------------------------------------------------
+   14. Reduced Motion
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {

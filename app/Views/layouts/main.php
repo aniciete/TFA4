@@ -71,6 +71,18 @@
 
     <main id="main-content" class="main-content" role="main" tabindex="-1">
         <div class="container content-container">
+            <?php if (session()->getFlashdata('message')): ?>
+                <div class="flash-alert flash-success" role="status">
+                    <span class="flash-icon" aria-hidden="true">&check;</span>
+                    <span class="flash-text"><?= esc(session()->getFlashdata('message')) ?></span>
+                </div>
+            <?php endif; ?>
+            <?php if (session()->getFlashdata('error')): ?>
+                <div class="flash-alert flash-danger" role="alert">
+                    <span class="flash-icon" aria-hidden="true">&excl;</span>
+                    <span class="flash-text"><?= esc(session()->getFlashdata('error')) ?></span>
+                </div>
+            <?php endif; ?>
             <?= $this->renderSection('content') ?>
         </div>
     </main>

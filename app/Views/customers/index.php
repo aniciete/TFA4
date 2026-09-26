@@ -13,6 +13,11 @@
             </div>
             <h1 class="page-title">Customer Accounts</h1>
             <p class="section-lead">Registered retail and commercial client profiles.</p>
+            <div class="directory-actions-bar">
+                <a href="<?= site_url('customers/new') ?>" class="button button-primary">
+                    <span>+ New Customer</span>
+                </a>
+            </div>
         </div>
         <div class="overlapping-stat" aria-label="Customer summary count">
             <span class="stat-giant" aria-hidden="true"><?= sprintf('%02d', count($customers)) ?></span>
@@ -32,6 +37,7 @@
                     <th scope="col">Full Name</th>
                     <th scope="col">Email Address</th>
                     <th scope="col">Phone Number</th>
+                    <th scope="col" class="th-actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -40,7 +46,10 @@
                         <td class="td-num" data-label="#"><?= sprintf('%02d', $index + 1) ?></td>
                         <td class="cell-primary" data-label="Full Name"><?= esc($customer['full_name']) ?></td>
                         <td class="cell-email" data-label="Email Address"><a href="mailto:<?= esc($customer['email']) ?>" class="table-link"><?= esc($customer['email']) ?></a></td>
-                        <td class="cell-mono tabular-num" data-label="Phone Number"><?= esc($customer['phone']) ?></td>
+                        <td class="cell-mono tabular-num" data-label="Phone Number"><?= esc($customer['phone'] ?: '—') ?></td>
+                        <td class="cell-actions" data-label="Actions">
+                            <a href="<?= site_url('customers/edit/' . $customer['id']) ?>" class="table-action-link">Edit</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
