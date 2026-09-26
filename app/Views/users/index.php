@@ -14,7 +14,7 @@
             <h1 class="page-title">User Accounts</h1>
             <p class="section-lead">Authorized internal personnel and system operator records.</p>
             <div class="directory-actions-bar">
-                <a href="<?= site_url('users/new') ?>" class="button button-primary">
+                <a href="<?= esc(site_url('users/new'), 'attr') ?>" class="button button-primary">
                     <span>+ New User</span>
                 </a>
             </div>
@@ -47,13 +47,12 @@
                         <td class="td-num" data-label="#"><?= sprintf('%02d', $index + 1) ?></td>
                         <td class="cell-avatar" data-label="Avatar">
                             <div class="avatar-thumb-wrapper">
-                                <img src="<?= esc($user['avatar_url'], 'attr') ?>" 
-                                     alt="<?= esc($user['full_name'], 'attr') ?> avatar" 
-                                     class="avatar-thumb <?= $user['has_avatar'] ? '' : 'avatar-placeholder' ?>" 
-                                     width="40" 
-                                     height="40" 
-                                     loading="lazy"
-                                     onerror="this.onerror=null;this.src='<?= esc(base_url('assets/images/avatar-placeholder.svg'), 'attr') ?>';">
+                                <img src="<?= esc($user['avatar_url'], 'attr') ?>"
+                                     alt="<?= esc($user['full_name'], 'attr') ?> avatar"
+                                     class="avatar-thumb <?= $user['has_avatar'] ? '' : 'avatar-placeholder' ?>"
+                                     width="40"
+                                     height="40"
+                                     loading="lazy">
                             </div>
                         </td>
                         <td class="cell-mono tabular-num" data-label="Username"><?= esc($user['username']) ?></td>

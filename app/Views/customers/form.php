@@ -12,8 +12,8 @@
         </div>
         <h1 class="page-title"><?= $mode === 'create' ? 'New Customer Account' : 'Edit Customer Account' ?></h1>
         <p class="section-lead">
-            <?= $mode === 'create' 
-                ? 'Register a verified customer profile for checkout, receipts, and account communications.' 
+            <?= $mode === 'create'
+                ? 'Register a verified customer profile for checkout, receipts, and account communications.'
                 : 'Modify customer contact details and account parameters.' ?>
         </p>
     </header>
@@ -38,7 +38,7 @@
             <span class="form-card-docket">DOCKET &bull; PERSISTENCE</span>
         </div>
 
-        <form action="<?= esc($action) ?>" method="post" class="ledger-form" novalidate>
+        <form action="<?= esc($action, 'attr') ?>" method="post" class="ledger-form" novalidate>
             <?= csrf_field() ?>
 
             <div class="form-group <?= isset($errors['full_name']) ? 'has-error' : '' ?>">
@@ -46,14 +46,14 @@
                     <span>Full Name</span>
                     <span class="req-star" aria-hidden="true">*</span>
                 </label>
-                <input 
-                    type="text" 
-                    id="full_name" 
-                    name="full_name" 
-                    class="form-input" 
-                    value="<?= esc(old('full_name', $customer['full_name'] ?? '')) ?>" 
-                    placeholder="e.g. Elena Rostova" 
-                    required 
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    class="form-input"
+                    value="<?= esc(old('full_name', $customer['full_name'] ?? '')) ?>"
+                    placeholder="e.g. Elena Rostova"
+                    required
                     aria-describedby="<?= isset($errors['full_name']) ? 'full_name_error' : 'full_name_help' ?>"
                 >
                 <?php if (isset($errors['full_name'])): ?>
@@ -68,14 +68,14 @@
                     <span>Email Address</span>
                     <span class="req-star" aria-hidden="true">*</span>
                 </label>
-                <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    class="form-input" 
-                    value="<?= esc(old('email', $customer['email'] ?? '')) ?>" 
-                    placeholder="e.g. elena.rostova@example.com" 
-                    required 
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    class="form-input"
+                    value="<?= esc(old('email', $customer['email'] ?? '')) ?>"
+                    placeholder="e.g. elena.rostova@example.com"
+                    required
                     aria-describedby="<?= isset($errors['email']) ? 'email_error' : 'email_help' ?>"
                 >
                 <?php if (isset($errors['email'])): ?>
@@ -90,13 +90,13 @@
                     <span>Phone Number</span>
                     <span class="optional-tag">(Optional)</span>
                 </label>
-                <input 
-                    type="text" 
-                    id="phone" 
-                    name="phone" 
-                    class="form-input" 
-                    value="<?= esc(old('phone', $customer['phone'] ?? '')) ?>" 
-                    placeholder="e.g. +1 (555) 234-5678" 
+                <input
+                    type="text"
+                    id="phone"
+                    name="phone"
+                    class="form-input"
+                    value="<?= esc(old('phone', $customer['phone'] ?? '')) ?>"
+                    placeholder="e.g. +1 (555) 234-5678"
                     aria-describedby="<?= isset($errors['phone']) ? 'phone_error' : 'phone_help' ?>"
                 >
                 <?php if (isset($errors['phone'])): ?>
@@ -118,7 +118,7 @@
                     <span><?= $mode === 'create' ? 'Save Customer' : 'Update Customer' ?></span>
                     <span class="btn-arrow" aria-hidden="true">&rarr;</span>
                 </button>
-                <a href="<?= site_url('customers') ?>" class="button button-secondary">
+                <a href="<?= esc(site_url('customers'), 'attr') ?>" class="button button-secondary">
                     Cancel
                 </a>
             </div>

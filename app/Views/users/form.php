@@ -12,8 +12,8 @@
         </div>
         <h1 class="page-title"><?= $mode === 'create' ? 'New User Account' : 'Edit User Account' ?></h1>
         <p class="section-lead">
-            <?= $mode === 'create' 
-                ? 'Create authorized store personnel and operator credentials backed by relational storage.' 
+            <?= $mode === 'create'
+                ? 'Create authorized store personnel and operator credentials backed by relational storage.'
                 : 'Modify operator account profile, username, and profile picture avatar.' ?>
         </p>
     </header>
@@ -38,7 +38,7 @@
             <span class="form-card-docket">AUTH &bull; CREDENTIALS</span>
         </div>
 
-        <form action="<?= esc($action) ?>" method="post" enctype="multipart/form-data" class="ledger-form" novalidate>
+        <form action="<?= esc($action, 'attr') ?>" method="post" enctype="multipart/form-data" class="ledger-form" novalidate>
             <?= csrf_field() ?>
 
             <div class="form-group <?= isset($errors['full_name']) ? 'has-error' : '' ?>">
@@ -46,14 +46,14 @@
                     <span>Full Name</span>
                     <span class="req-star" aria-hidden="true">*</span>
                 </label>
-                <input 
-                    type="text" 
-                    id="full_name" 
-                    name="full_name" 
-                    class="form-input" 
-                    value="<?= esc(old('full_name', $user['full_name'] ?? '')) ?>" 
-                    placeholder="e.g. Carlos Reyes" 
-                    required 
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    class="form-input"
+                    value="<?= esc(old('full_name', $user['full_name'] ?? '')) ?>"
+                    placeholder="e.g. Carlos Reyes"
+                    required
                     aria-describedby="<?= isset($errors['full_name']) ? 'full_name_error' : 'full_name_help' ?>"
                 >
                 <?php if (isset($errors['full_name'])): ?>
@@ -68,14 +68,14 @@
                     <span>Username</span>
                     <span class="req-star" aria-hidden="true">*</span>
                 </label>
-                <input 
-                    type="text" 
-                    id="username" 
-                    name="username" 
-                    class="form-input" 
-                    value="<?= esc(old('username', $user['username'] ?? '')) ?>" 
-                    placeholder="e.g. admin.reyes" 
-                    required 
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    class="form-input"
+                    value="<?= esc(old('username', $user['username'] ?? '')) ?>"
+                    placeholder="e.g. admin.reyes"
+                    required
                     aria-describedby="<?= isset($errors['username']) ? 'username_error' : 'username_help' ?>"
                 >
                 <?php if (isset($errors['username'])): ?>
@@ -93,10 +93,9 @@
 
                 <?php if ($mode === 'edit'): ?>
                     <div class="avatar-preview-box">
-                        <img src="<?= esc($user['avatar_url'], 'attr') ?>" 
-                             alt="<?= $user['has_avatar'] ? 'Current avatar' : 'Default avatar placeholder' ?>" 
-                             class="avatar-preview-img <?= $user['has_avatar'] ? '' : 'avatar-placeholder' ?>"
-                             onerror="this.onerror=null;this.src='<?= esc(base_url('assets/images/avatar-placeholder.svg'), 'attr') ?>';">
+                        <img src="<?= esc($user['avatar_url'], 'attr') ?>"
+                             alt="<?= $user['has_avatar'] ? 'Current avatar' : 'Default avatar placeholder' ?>"
+                             class="avatar-preview-img <?= $user['has_avatar'] ? '' : 'avatar-placeholder' ?>">
                         <div class="avatar-preview-details">
                             <?php if ($user['has_avatar']): ?>
                                 <span class="avatar-preview-title">Current Avatar Assigned</span>
@@ -109,12 +108,12 @@
                     </div>
                 <?php endif; ?>
 
-                <input 
-                    type="file" 
-                    id="avatar" 
-                    name="avatar" 
-                    accept="image/jpeg,image/png,image/jpg" 
+                <input
+                    type="file"
+                    id="avatar"
+                    name="avatar"
                     class="form-file-input"
+                    accept="image/jpeg,image/png,image/jpg"
                     aria-describedby="<?= isset($errors['avatar']) ? 'avatar_error' : 'avatar_help' ?>"
                 >
                 <?php if (isset($errors['avatar'])): ?>
@@ -138,7 +137,7 @@
                     <span><?= $mode === 'create' ? 'Save User' : 'Update User' ?></span>
                     <span class="btn-arrow" aria-hidden="true">&rarr;</span>
                 </button>
-                <a href="<?= site_url('users') ?>" class="button button-secondary">
+                <a href="<?= esc(site_url('users'), 'attr') ?>" class="button button-secondary">
                     Cancel
                 </a>
             </div>
