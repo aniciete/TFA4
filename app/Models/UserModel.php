@@ -15,6 +15,7 @@ class UserModel extends Model
     protected $allowedFields    = [
         'username',
         'full_name',
+        'avatar',
         'created_at',
     ];
 
@@ -25,4 +26,26 @@ class UserModel extends Model
     protected $dateFormat    = 'datetime';
     protected $createdField  = 'created_at';
     protected $updatedField  = '';
+
+    // Validation
+    protected $validationRules = [
+        'id'        => 'permit_empty|is_natural_no_zero',
+        'full_name' => 'required|min_length[2]|max_length[100]',
+        'username'  => 'required|min_length[3]|max_length[50]|is_unique[users.username,id,{id}]',
+        'avatar'    => 'permit_empty|max_length[255]',
+    ];
+
+    protected $validationMessages = [
+        'full_name' => [
+            'required'   => 'Full Name is required.',
+            'min_length' => 'Full Name must be at least 2 characters.',
+            'max_length' => 'Full Name cannot exceed 100 characters.',
+        ],
+        'username' => [
+            'required'   => 'Username is required.',
+            'min_length' => 'Username must be at least 3 characters.',
+            'max_length' => 'Username cannot exceed 50 characters.',
+            'is_unique'  => 'This username is already taken. Please choose another.',
+        ],
+    ];
 }

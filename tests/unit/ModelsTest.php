@@ -53,8 +53,42 @@ final class ModelsTest extends CIUnitTestCase
             $this->assertArrayHasKey('id', $user);
             $this->assertArrayHasKey('username', $user);
             $this->assertArrayHasKey('full_name', $user);
+            $this->assertArrayHasKey('avatar', $user);
             $this->assertArrayHasKey('created_at', $user);
             $this->assertArrayNotHasKey('role', $user);
         }
     }
+
+    public function testCustomerModelValidationFailsOnInvalidEmailAndMissingName(): void
+    {
+        $customerModel = new CustomerModel();
+
+        // Missing name and invalid email
+        $result = $customerModel->validate([
+            'full_name' => '',
+            'email'     => 'not-an-email',
+            'phone'     => '123',
+        ]);
+
+        $this->assertFalse($result);
+        $errors = $customerModel->errors();
+        $this->assertArrayHasKey('full_name', $errors);
+        $this->assertArrayHasKey('email', $errors);
+    }
+
+    public function testUserModelValidationFailsOnDuplicateUsername(): void
+    {
+        $userModel = new UserModel();
+
+        // Duplicate username 'admin.reyes' already seeded
+        $result = $userModel->validate([
+            'username'  => 'admin.reyes',
+            'full_name' => 'Duplicate Admin',
+        ]);
+
+        $this->assertFalse($result);
+        $errors = $userModel->errors();
+        $this->assertArrayHasKey('username', $errors);
+    }
 }
+
