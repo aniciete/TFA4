@@ -6,6 +6,7 @@ use App\Models\UserModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\HTTP\Files\UploadedFile;
 use CodeIgniter\HTTP\RedirectResponse;
+use Throwable;
 
 class Users extends BaseController
 {
@@ -69,14 +70,24 @@ class Users extends BaseController
         $avatarName = null;
         if ($avatarFile && $avatarFile->getError() === UPLOAD_ERR_OK && ! $avatarFile->hasMoved()) {
             $avatarName = service('avatarManager')->processUpload($avatarFile);
+            if ($avatarName === null) {
+                return redirect()->back()->withInput()->with('errors', ['avatar' => 'Failed to process avatar image. Please try again.']);
+            }
         }
 
-        $inserted = $this->userModel->insert([
-            'username'   => trim((string) $this->request->getPost('username')),
-            'full_name'  => trim((string) $this->request->getPost('full_name')),
-            'avatar'     => $avatarName,
-            'created_at' => date('Y-m-d H:i:s'),
-        ]);
+        try {
+            $inserted = $this->userModel->insert([
+                'username'   => trim((string) $this->request->getPost('username')),
+                'full_name'  => trim((string) $this->request->getPost('full_name')),
+                'avatar'     => $avatarName,
+                'created_at' => date('Y-m-d H:i:s'),
+            ]);
+        } catch (Throwable $e) {
+            if ($avatarName) {
+                service('avatarManager')->deleteAvatar($avatarName);
+            }
+            throw $e;
+        }
 
         if (! $inserted) {
             if ($avatarName) {
@@ -133,18 +144,26 @@ class Users extends BaseController
         $avatarManager = service('avatarManager');
         $newAvatar     = null;
         if ($avatarFile && $avatarFile->getError() === UPLOAD_ERR_OK && ! $avatarFile->hasMoved()) {
-            $newAvatar    = $avatarManager->processUpload($avatarFile);
-            $avatarToSave = $newAvatar;
-        } else {
-            // Preserve existing avatar when editing without a replacement
-            $avatarToSave = $user['avatar'];
+            $newAvatar = $avatarManager->processUpload($avatarFile);
+            if ($newAvatar === null) {
+                return redirect()->back()->withInput()->with('errors', ['avatar' => 'Failed to process avatar image. Please try again.']);
+            }
         }
 
-        $updated = $this->userModel->update($id, [
-            'username'  => trim((string) $this->request->getPost('username')),
-            'full_name' => trim((string) $this->request->getPost('full_name')),
-            'avatar'    => $avatarToSave,
-        ]);
+        $avatarToSave = $newAvatar ?? $user['avatar'];
+
+        try {
+            $updated = $this->userModel->update($id, [
+                'username'  => trim((string) $this->request->getPost('username')),
+                'full_name' => trim((string) $this->request->getPost('full_name')),
+                'avatar'    => $avatarToSave,
+            ]);
+        } catch (Throwable $e) {
+            if ($newAvatar) {
+                $avatarManager->deleteAvatar($newAvatar);
+            }
+            throw $e;
+        }
 
         if (! $updated) {
             if ($newAvatar) {

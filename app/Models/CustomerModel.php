@@ -45,5 +45,8 @@ class CustomerModel extends Model
             'valid_email' => 'Please provide a valid email address.',
             'max_length'  => 'Email Address cannot exceed 100 characters.',
         ],
+        'phone' => [
+            'max_length' => 'Phone number cannot exceed 20 characters.',
+        ],
     ];
 }

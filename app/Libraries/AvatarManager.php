@@ -97,12 +97,8 @@ class AvatarManager
      */
     public function prepareUserAvatar(array $user): array
     {
-        $hasAvatar = $this->avatarExists($user['avatar'] ?? null);
-
-        $user['has_avatar'] = $hasAvatar;
-        $user['avatar_url'] = $hasAvatar
-            ? base_url('uploads/avatars/' . $user['avatar'])
-            : base_url('assets/images/avatar-placeholder.svg');
+        $user['has_avatar'] = $this->avatarExists($user['avatar'] ?? null);
+        $user['avatar_url'] = $this->getAvatarUrl($user['avatar'] ?? null);
 
         return $user;
     }

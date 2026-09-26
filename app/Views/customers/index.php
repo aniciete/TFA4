@@ -14,7 +14,7 @@
             <h1 class="page-title">Customer Accounts</h1>
             <p class="section-lead">Registered retail and commercial client profiles.</p>
             <div class="directory-actions-bar">
-                <a href="<?= site_url('customers/new') ?>" class="button button-primary">
+                <a href="<?= esc(site_url('customers/new'), 'attr') ?>" class="button button-primary">
                     <span>+ New Customer</span>
                 </a>
             </div>
