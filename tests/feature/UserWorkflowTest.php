@@ -270,6 +270,13 @@ final class UserWorkflowTest extends CIUnitTestCase
 
     public function testUpdateUserPreservesExistingAvatarWhenNoReplacementSubmitted(): void
     {
+        $targetDir = FCPATH . 'uploads/avatars';
+        if (! is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+        $preservedFile = $targetDir . DIRECTORY_SEPARATOR . 'preserved_avatar_123.jpg';
+        file_put_contents($preservedFile, 'sample_image_data');
+
         $userModel = new UserModel();
         $userModel->update(1, ['avatar' => 'preserved_avatar_123.jpg']);
 
@@ -298,5 +305,77 @@ final class UserWorkflowTest extends CIUnitTestCase
         // Verify edit page displays the preserved avatar preview
         $editPage = $this->get('users/edit/1');
         $editPage->assertSee('preserved_avatar_123.jpg');
+
+        @unlink($preservedFile);
+    }
+
+    public function testAvatarMissingFileFallsBackToPlaceholderSvg(): void
+    {
+        $userModel = new UserModel();
+        // Point avatar to a non-existent file on disk
+        $userModel->update(1, ['avatar' => 'ghost_missing_avatar.png']);
+
+        // Users index should fall back to placeholder SVG
+        $indexPage = $this->get('users');
+        $indexPage->assertOK();
+        $indexPage->assertSee('avatar-placeholder.svg');
+
+        // Users edit page should recognize file is missing and fall back to placeholder
+        $editPage = $this->get('users/edit/1');
+        $editPage->assertOK();
+        $editPage->assertSee('avatar-placeholder.svg');
+        $editPage->assertSee('No Avatar Assigned');
+    }
+
+    public function testUpdateUserWithNewAvatarDeletesPreviousAvatarFile(): void
+    {
+        $targetDir = FCPATH . 'uploads/avatars';
+        if (! is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        // Create an initial avatar file on disk
+        $oldAvatarFilename = 'old_avatar_to_delete.png';
+        $oldAvatarPath     = $targetDir . DIRECTORY_SEPARATOR . $oldAvatarFilename;
+        file_put_contents($oldAvatarPath, 'fake_png_data');
+        $this->assertFileExists($oldAvatarPath);
+
+        $userModel = new UserModel();
+        $userModel->update(1, ['avatar' => $oldAvatarFilename]);
+
+        // Upload a new valid image
+        $tmpImage = tempnam(sys_get_temp_dir(), 'new_avatar_test') . '.png';
+        $gd       = imagecreatetruecolor(100, 100);
+        imagepng($gd, $tmpImage);
+        imagedestroy($gd);
+
+        $files = [
+            'avatar' => [
+                'name'     => 'brand_new_avatar.png',
+                'type'     => 'image/png',
+                'size'     => filesize($tmpImage),
+                'tmp_name' => $tmpImage,
+                'error'    => UPLOAD_ERR_OK,
+            ],
+        ];
+        service('superglobals')->setFilesArray($files);
+
+        $result = $this->post('users/edit/1', [
+            'username'  => 'admin.reyes',
+            'full_name' => 'Carlos Reyes Replaced Avatar',
+        ]);
+
+        $result->assertRedirectTo(site_url('users'));
+
+        // Assert previous avatar file was deleted from disk
+        $this->assertFileDoesNotExist($oldAvatarPath, 'Old avatar file must be unlinked when replaced.');
+
+        // Clean up newly created avatar file
+        $updated = $userModel->find(1);
+        $this->assertNotNull($updated['avatar']);
+        $this->assertNotSame($oldAvatarFilename, $updated['avatar']);
+        @unlink($targetDir . DIRECTORY_SEPARATOR . $updated['avatar']);
+        @unlink($tmpImage);
     }
 }
+
