@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
-use CodeIgniter\HTTP\Files\UploadedFile;
 use CodeIgniter\HTTP\RedirectResponse;
 
 class Users extends BaseController
@@ -52,20 +51,7 @@ class Users extends BaseController
 
         $avatarFile = $this->request->getFile('avatar');
         if ($avatarFile && $avatarFile->getError() !== UPLOAD_ERR_NO_FILE) {
-            $rules['avatar'] = [
-                'label' => 'Avatar Image',
-                'rules' => [
-                    'uploaded[avatar]',
-                    'is_image[avatar]',
-                    'mime_in[avatar,image/jpg,image/jpeg,image/png]',
-                    'max_size[avatar,2048]',
-                ],
-                'errors' => [
-                    'is_image' => 'The avatar must be a valid image file.',
-                    'mime_in'  => 'The avatar must be a JPG, JPEG, or PNG image.',
-                    'max_size' => 'The avatar file size must not exceed 2 MB.',
-                ],
-            ];
+            $rules = array_merge($rules, $this->getAvatarValidationRules());
         }
 
         $messages = [
@@ -87,8 +73,8 @@ class Users extends BaseController
         }
 
         $avatarName = null;
-        if ($avatarFile && ($avatarFile->isValid() || (ENVIRONMENT === 'testing' && $avatarFile->getError() === UPLOAD_ERR_OK)) && ! $avatarFile->hasMoved()) {
-            $avatarName = $this->processAvatarUpload($avatarFile);
+        if ($avatarFile && $avatarFile->getError() === UPLOAD_ERR_OK && ! $avatarFile->hasMoved()) {
+            $avatarName = service('avatarManager')->processUpload($avatarFile);
         }
 
         $this->userModel->insert([
@@ -134,20 +120,7 @@ class Users extends BaseController
 
         $avatarFile = $this->request->getFile('avatar');
         if ($avatarFile && $avatarFile->getError() !== UPLOAD_ERR_NO_FILE) {
-            $rules['avatar'] = [
-                'label' => 'Avatar Image',
-                'rules' => [
-                    'uploaded[avatar]',
-                    'is_image[avatar]',
-                    'mime_in[avatar,image/jpg,image/jpeg,image/png]',
-                    'max_size[avatar,2048]',
-                ],
-                'errors' => [
-                    'is_image' => 'The avatar must be a valid image file.',
-                    'mime_in'  => 'The avatar must be a JPG, JPEG, or PNG image.',
-                    'max_size' => 'The avatar file size must not exceed 2 MB.',
-                ],
-            ];
+            $rules = array_merge($rules, $this->getAvatarValidationRules());
         }
 
         $messages = [
@@ -168,8 +141,11 @@ class Users extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        if ($avatarFile && ($avatarFile->isValid() || (ENVIRONMENT === 'testing' && $avatarFile->getError() === UPLOAD_ERR_OK)) && ! $avatarFile->hasMoved()) {
-            $avatarToSave = $this->processAvatarUpload($avatarFile);
+        $avatarManager = service('avatarManager');
+        if ($avatarFile && $avatarFile->getError() === UPLOAD_ERR_OK && ! $avatarFile->hasMoved()) {
+            $avatarToSave = $avatarManager->processUpload($avatarFile);
+            // Clean up replaced avatar file to prevent disk leakage
+            $avatarManager->deleteAvatar($user['avatar']);
         } else {
             // Preserve existing avatar when editing without a replacement
             $avatarToSave = $user['avatar'];
@@ -186,31 +162,25 @@ class Users extends BaseController
     }
 
     /**
-     * Store and resize uploaded avatar to display-ready 256x256 max dimensions.
+     * Shared validation rules and messages for avatar file uploads.
      */
-    protected function processAvatarUpload(UploadedFile $file): ?string
+    protected function getAvatarValidationRules(): array
     {
-        $targetDir = FCPATH . 'uploads/avatars';
-
-        if (! is_dir($targetDir)) {
-            mkdir($targetDir, 0755, true);
-        }
-
-        $newName       = $file->getRandomName();
-        $savedFilePath = $targetDir . DIRECTORY_SEPARATOR . $newName;
-
-        if (ENVIRONMENT === 'testing' && ! is_uploaded_file($file->getTempName())) {
-            copy($file->getTempName(), $savedFilePath);
-        } else {
-            $file->move($targetDir, $newName);
-        }
-
-        // Resize image to display-ready 256x256 maximum maintaining aspect ratio
-        service('image')
-            ->withFile($savedFilePath)
-            ->resize(256, 256, true, 'auto')
-            ->save($savedFilePath);
-
-        return $newName;
+        return [
+            'avatar' => [
+                'label'  => 'Avatar Image',
+                'rules'  => [
+                    'uploaded[avatar]',
+                    'is_image[avatar]',
+                    'mime_in[avatar,image/jpg,image/jpeg,image/png]',
+                    'max_size[avatar,2048]',
+                ],
+                'errors' => [
+                    'is_image' => 'The avatar must be a valid image file.',
+                    'mime_in'  => 'The avatar must be a JPG, JPEG, or PNG image.',
+                    'max_size' => 'The avatar file size must not exceed 2 MB.',
+                ],
+            ],
+        ];
     }
 }
