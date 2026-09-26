@@ -13,6 +13,11 @@
             </div>
             <h1 class="page-title">User Accounts</h1>
             <p class="section-lead">Authorized internal personnel and system operator records.</p>
+            <div class="directory-actions-bar">
+                <a href="<?= site_url('users/new') ?>" class="button button-primary">
+                    <span>+ New User</span>
+                </a>
+            </div>
         </div>
         <div class="overlapping-stat" aria-label="User summary count">
             <span class="stat-giant" aria-hidden="true"><?= sprintf('%02d', count($users)) ?></span>
@@ -29,18 +34,32 @@
             <thead>
                 <tr>
                     <th scope="col" class="th-num">#</th>
+                    <th scope="col" class="th-avatar">Avatar</th>
                     <th scope="col">Username</th>
                     <th scope="col">Full Name</th>
                     <th scope="col">Created At</th>
+                    <th scope="col" class="th-actions">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach ($users as $index => $user): ?>
                     <tr class="ledger-row-item">
                         <td class="td-num" data-label="#"><?= sprintf('%02d', $index + 1) ?></td>
+                        <td class="cell-avatar" data-label="Avatar">
+                            <div class="avatar-thumb-wrapper">
+                                <?php if (! empty($user['avatar'])): ?>
+                                    <img src="<?= base_url('uploads/avatars/' . esc($user['avatar'])) ?>" alt="<?= esc($user['full_name']) ?> avatar" class="avatar-thumb" width="40" height="40" loading="lazy">
+                                <?php else: ?>
+                                    <img src="<?= base_url('assets/images/avatar-placeholder.svg') ?>" alt="Default avatar placeholder" class="avatar-thumb avatar-placeholder" width="40" height="40">
+                                <?php endif; ?>
+                            </div>
+                        </td>
                         <td class="cell-mono tabular-num" data-label="Username"><?= esc($user['username']) ?></td>
                         <td class="cell-primary" data-label="Full Name"><?= esc($user['full_name']) ?></td>
                         <td class="cell-mono tabular-num" data-label="Created At"><?= esc($user['created_at']) ?></td>
+                        <td class="cell-actions" data-label="Actions">
+                            <a href="<?= site_url('users/edit/' . $user['id']) ?>" class="table-action-link">Edit</a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
