@@ -20,6 +20,7 @@ webdes/
 *.docx
 *.doc
 *.pdf
+tfa3-pages/
 
 # Internal Planning & Development Notes
 *PLAN*.md

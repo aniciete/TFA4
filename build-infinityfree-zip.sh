@@ -16,6 +16,7 @@ rsync -av \
   --exclude="tests" \
   --exclude="build" \
   --exclude="webdes" \
+  --exclude="tfa3-pages" \
   --exclude="*.docx" \
   --exclude="*.zip" \
   --exclude="build-infinityfree-zip.sh" \
