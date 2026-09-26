@@ -92,20 +92,25 @@
                 </label>
 
                 <?php if ($mode === 'edit'): ?>
+                    <?php
+                        $avatarManager   = service('avatarManager');
+                        $hasCustomAvatar = $avatarManager->avatarExists($user['avatar'] ?? null);
+                        $avatarUrl       = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
+                    ?>
                     <div class="avatar-preview-box">
-                        <?php if (! empty($user['avatar'])): ?>
-                            <img src="<?= base_url('uploads/avatars/' . esc($user['avatar'])) ?>" alt="Current avatar" class="avatar-preview-img">
-                            <div class="avatar-preview-details">
+                        <img src="<?= esc($avatarUrl) ?>" 
+                             alt="<?= $hasCustomAvatar ? 'Current avatar' : 'Default avatar placeholder' ?>" 
+                             class="avatar-preview-img <?= $hasCustomAvatar ? '' : 'avatar-placeholder' ?>"
+                             onerror="this.onerror=null;this.src='<?= base_url('assets/images/avatar-placeholder.svg') ?>';">
+                        <div class="avatar-preview-details">
+                            <?php if ($hasCustomAvatar): ?>
                                 <span class="avatar-preview-title">Current Avatar Assigned</span>
                                 <span class="avatar-preview-subtext"><?= esc($user['avatar']) ?></span>
-                            </div>
-                        <?php else: ?>
-                            <img src="<?= base_url('assets/images/avatar-placeholder.svg') ?>" alt="Default avatar placeholder" class="avatar-preview-img">
-                            <div class="avatar-preview-details">
+                            <?php else: ?>
                                 <span class="avatar-preview-title">No Avatar Assigned</span>
                                 <span class="avatar-preview-subtext">Using default market placeholder</span>
-                            </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 <?php endif; ?>
 

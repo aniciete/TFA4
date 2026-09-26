@@ -43,15 +43,22 @@
             </thead>
             <tbody>
                 <?php foreach ($users as $index => $user): ?>
+                    <?php
+                        $avatarManager   = service('avatarManager');
+                        $hasCustomAvatar = $avatarManager->avatarExists($user['avatar'] ?? null);
+                        $avatarUrl       = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
+                    ?>
                     <tr class="ledger-row-item">
                         <td class="td-num" data-label="#"><?= sprintf('%02d', $index + 1) ?></td>
                         <td class="cell-avatar" data-label="Avatar">
                             <div class="avatar-thumb-wrapper">
-                                <?php if (! empty($user['avatar'])): ?>
-                                    <img src="<?= base_url('uploads/avatars/' . esc($user['avatar'])) ?>" alt="<?= esc($user['full_name']) ?> avatar" class="avatar-thumb" width="40" height="40" loading="lazy">
-                                <?php else: ?>
-                                    <img src="<?= base_url('assets/images/avatar-placeholder.svg') ?>" alt="Default avatar placeholder" class="avatar-thumb avatar-placeholder" width="40" height="40">
-                                <?php endif; ?>
+                                <img src="<?= esc($avatarUrl) ?>" 
+                                     alt="<?= esc($user['full_name']) ?> avatar" 
+                                     class="avatar-thumb <?= $hasCustomAvatar ? '' : 'avatar-placeholder' ?>" 
+                                     width="40" 
+                                     height="40" 
+                                     loading="lazy"
+                                     onerror="this.onerror=null;this.src='<?= base_url('assets/images/avatar-placeholder.svg') ?>';">
                             </div>
                         </td>
                         <td class="cell-mono tabular-num" data-label="Username"><?= esc($user['username']) ?></td>
