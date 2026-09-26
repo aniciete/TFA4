@@ -51,12 +51,16 @@ class Customers extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $this->customerModel->insert([
+        $inserted = $this->customerModel->insert([
             'full_name'  => trim((string) $this->request->getPost('full_name')),
             'email'      => trim((string) $this->request->getPost('email')),
             'phone'      => trim((string) $this->request->getPost('phone')),
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+
+        if (! $inserted) {
+            return redirect()->back()->withInput()->with('errors', $this->customerModel->errors());
+        }
 
         return redirect()->to(site_url('customers'))->with('message', 'Customer account created successfully.');
     }
@@ -94,11 +98,15 @@ class Customers extends BaseController
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $this->customerModel->update($id, [
+        $updated = $this->customerModel->update($id, [
             'full_name' => trim((string) $this->request->getPost('full_name')),
             'email'     => trim((string) $this->request->getPost('email')),
             'phone'     => trim((string) $this->request->getPost('phone')),
         ]);
+
+        if (! $updated) {
+            return redirect()->back()->withInput()->with('errors', $this->customerModel->errors());
+        }
 
         return redirect()->to(site_url('customers'))->with('message', 'Customer account updated successfully.');
     }

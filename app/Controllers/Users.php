@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\UserModel;
 use CodeIgniter\Exceptions\PageNotFoundException;
+use CodeIgniter\HTTP\Files\UploadedFile;
 use CodeIgniter\HTTP\RedirectResponse;
 
 class Users extends BaseController
@@ -21,8 +22,7 @@ class Users extends BaseController
         $avatarManager = service('avatarManager');
 
         foreach ($users as &$user) {
-            $user['has_avatar'] = $avatarManager->avatarExists($user['avatar'] ?? null);
-            $user['avatar_url'] = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
+            $user = $avatarManager->prepareUserAvatar($user);
         }
         unset($user);
 
@@ -35,18 +35,18 @@ class Users extends BaseController
 
     public function new(): string
     {
+        $user = service('avatarManager')->prepareUserAvatar([
+            'username'  => '',
+            'full_name' => '',
+            'avatar'    => null,
+        ]);
+
         return view('users/form', [
             'title'      => 'New User Account | POS Database',
             'activePage' => 'users',
             'mode'       => 'create',
             'action'     => site_url('users/new'),
-            'user'       => [
-                'username'   => '',
-                'full_name'  => '',
-                'avatar'     => null,
-                'has_avatar' => false,
-                'avatar_url' => base_url('assets/images/avatar-placeholder.svg'),
-            ],
+            'user'       => $user,
             'errors'     => session()->getFlashdata('errors') ?? [],
         ]);
     }
@@ -59,11 +59,8 @@ class Users extends BaseController
         ];
 
         $avatarFile = $this->request->getFile('avatar');
-        if ($avatarFile && $avatarFile->getError() !== UPLOAD_ERR_NO_FILE) {
-            $rules = array_merge($rules, $this->getAvatarValidationRules());
-        }
-
-        $messages = $this->userModel->getValidationMessages();
+        $rules      = $this->attachAvatarRules($rules, $avatarFile);
+        $messages   = $this->userModel->getValidationMessages();
 
         if (! $this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -74,12 +71,20 @@ class Users extends BaseController
             $avatarName = service('avatarManager')->processUpload($avatarFile);
         }
 
-        $this->userModel->insert([
+        $inserted = $this->userModel->insert([
             'username'   => trim((string) $this->request->getPost('username')),
             'full_name'  => trim((string) $this->request->getPost('full_name')),
             'avatar'     => $avatarName,
             'created_at' => date('Y-m-d H:i:s'),
         ]);
+
+        if (! $inserted) {
+            if ($avatarName) {
+                service('avatarManager')->deleteAvatar($avatarName);
+            }
+
+            return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
+        }
 
         return redirect()->to(site_url('users'))->with('message', 'User account created successfully.');
     }
@@ -92,9 +97,7 @@ class Users extends BaseController
             throw PageNotFoundException::forPageNotFound("User #{$id} not found.");
         }
 
-        $avatarManager      = service('avatarManager');
-        $user['has_avatar'] = $avatarManager->avatarExists($user['avatar'] ?? null);
-        $user['avatar_url'] = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
+        $user = service('avatarManager')->prepareUserAvatar($user);
 
         return view('users/form', [
             'title'      => 'Edit User Account | POS Database',
@@ -120,11 +123,8 @@ class Users extends BaseController
         ];
 
         $avatarFile = $this->request->getFile('avatar');
-        if ($avatarFile && $avatarFile->getError() !== UPLOAD_ERR_NO_FILE) {
-            $rules = array_merge($rules, $this->getAvatarValidationRules());
-        }
-
-        $messages = $this->userModel->getValidationMessages();
+        $rules      = $this->attachAvatarRules($rules, $avatarFile);
+        $messages   = $this->userModel->getValidationMessages();
 
         if (! $this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -141,18 +141,40 @@ class Users extends BaseController
         }
 
         $updated = $this->userModel->update($id, [
-            'id'        => $id,
             'username'  => trim((string) $this->request->getPost('username')),
             'full_name' => trim((string) $this->request->getPost('full_name')),
             'avatar'    => $avatarToSave,
         ]);
 
+        if (! $updated) {
+            if ($newAvatar) {
+                $avatarManager->deleteAvatar($newAvatar);
+            }
+
+            return redirect()->back()->withInput()->with('errors', $this->userModel->errors());
+        }
+
         // Unlink old avatar only after database update succeeds to avoid premature deletion
-        if ($updated && $newAvatar !== null && ! empty($user['avatar'])) {
+        if ($newAvatar !== null && ! empty($user['avatar'])) {
             $avatarManager->deleteAvatar($user['avatar']);
         }
 
         return redirect()->to(site_url('users'))->with('message', 'User account updated successfully.');
+    }
+
+    /**
+     * Conditionally attach avatar upload validation rules if a file is present.
+     *
+     * @param array<string, mixed> $rules
+     * @return array<string, mixed>
+     */
+    protected function attachAvatarRules(array $rules, ?UploadedFile $avatarFile): array
+    {
+        if ($avatarFile && $avatarFile->getError() !== UPLOAD_ERR_NO_FILE) {
+            return array_merge($rules, $this->getAvatarValidationRules());
+        }
+
+        return $rules;
     }
 
     /**
