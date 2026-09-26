@@ -48,4 +48,14 @@ class UserModel extends Model
             'is_unique'  => 'This username is already taken. Please choose another.',
         ],
     ];
+
+    public function update($id = null, $row = null): bool
+    {
+        if (is_numeric($id) && is_array($row) && ! isset($row[$this->primaryKey])) {
+            $row[$this->primaryKey] = $id;
+        }
+
+        return parent::update($id, $row);
+    }
 }
+
