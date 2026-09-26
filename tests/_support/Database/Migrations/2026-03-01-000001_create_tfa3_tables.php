@@ -51,6 +51,11 @@ class CreateTfa3Tables extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 100,
             ],
+            'avatar' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
             ],
