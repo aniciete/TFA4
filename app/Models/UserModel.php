@@ -49,6 +49,10 @@ class UserModel extends Model
         ],
     ];
 
+    /**
+     * Ensure the primary key is present in the dataset so that {id}
+     * placeholder replacement functions correctly during Model validation.
+     */
     public function update($id = null, $row = null): bool
     {
         if (is_numeric($id) && is_array($row) && ! isset($row[$this->primaryKey])) {

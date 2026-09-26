@@ -17,7 +17,14 @@ class Users extends BaseController
 
     public function index(): string
     {
-        $users = $this->userModel->orderBy('id', 'ASC')->findAll();
+        $users         = $this->userModel->orderBy('id', 'ASC')->findAll();
+        $avatarManager = service('avatarManager');
+
+        foreach ($users as &$user) {
+            $user['has_avatar'] = $avatarManager->avatarExists($user['avatar'] ?? null);
+            $user['avatar_url'] = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
+        }
+        unset($user);
 
         return view('users/index', [
             'title'      => 'User Accounts | POS Database',
@@ -34,9 +41,11 @@ class Users extends BaseController
             'mode'       => 'create',
             'action'     => site_url('users/new'),
             'user'       => [
-                'username'  => '',
-                'full_name' => '',
-                'avatar'    => null,
+                'username'   => '',
+                'full_name'  => '',
+                'avatar'     => null,
+                'has_avatar' => false,
+                'avatar_url' => base_url('assets/images/avatar-placeholder.svg'),
             ],
             'errors'     => session()->getFlashdata('errors') ?? [],
         ]);
@@ -45,7 +54,7 @@ class Users extends BaseController
     public function create(): RedirectResponse
     {
         $rules = [
-            'full_name' => 'required|min_length[2]|max_length[100]',
+            'full_name' => $this->userModel->getValidationRules()['full_name'],
             'username'  => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
         ];
 
@@ -54,19 +63,7 @@ class Users extends BaseController
             $rules = array_merge($rules, $this->getAvatarValidationRules());
         }
 
-        $messages = [
-            'full_name' => [
-                'required'   => 'Full Name is required.',
-                'min_length' => 'Full Name must be at least 2 characters.',
-                'max_length' => 'Full Name cannot exceed 100 characters.',
-            ],
-            'username' => [
-                'required'   => 'Username is required.',
-                'min_length' => 'Username must be at least 3 characters.',
-                'max_length' => 'Username cannot exceed 50 characters.',
-                'is_unique'  => 'This username is already taken. Please choose another.',
-            ],
-        ];
+        $messages = $this->userModel->getValidationMessages();
 
         if (! $this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -95,6 +92,10 @@ class Users extends BaseController
             throw PageNotFoundException::forPageNotFound("User #{$id} not found.");
         }
 
+        $avatarManager      = service('avatarManager');
+        $user['has_avatar'] = $avatarManager->avatarExists($user['avatar'] ?? null);
+        $user['avatar_url'] = $avatarManager->getAvatarUrl($user['avatar'] ?? null);
+
         return view('users/form', [
             'title'      => 'Edit User Account | POS Database',
             'activePage' => 'users',
@@ -114,7 +115,7 @@ class Users extends BaseController
         }
 
         $rules = [
-            'full_name' => 'required|min_length[2]|max_length[100]',
+            'full_name' => $this->userModel->getValidationRules()['full_name'],
             'username'  => "required|min_length[3]|max_length[50]|is_unique[users.username,id,{$id}]",
         ];
 
@@ -123,40 +124,33 @@ class Users extends BaseController
             $rules = array_merge($rules, $this->getAvatarValidationRules());
         }
 
-        $messages = [
-            'full_name' => [
-                'required'   => 'Full Name is required.',
-                'min_length' => 'Full Name must be at least 2 characters.',
-                'max_length' => 'Full Name cannot exceed 100 characters.',
-            ],
-            'username' => [
-                'required'   => 'Username is required.',
-                'min_length' => 'Username must be at least 3 characters.',
-                'max_length' => 'Username cannot exceed 50 characters.',
-                'is_unique'  => 'This username is already taken. Please choose another.',
-            ],
-        ];
+        $messages = $this->userModel->getValidationMessages();
 
         if (! $this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
         $avatarManager = service('avatarManager');
+        $newAvatar     = null;
         if ($avatarFile && $avatarFile->getError() === UPLOAD_ERR_OK && ! $avatarFile->hasMoved()) {
-            $avatarToSave = $avatarManager->processUpload($avatarFile);
-            // Clean up replaced avatar file to prevent disk leakage
-            $avatarManager->deleteAvatar($user['avatar']);
+            $newAvatar    = $avatarManager->processUpload($avatarFile);
+            $avatarToSave = $newAvatar;
         } else {
             // Preserve existing avatar when editing without a replacement
             $avatarToSave = $user['avatar'];
         }
 
-        $this->userModel->update($id, [
+        $updated = $this->userModel->update($id, [
             'id'        => $id,
             'username'  => trim((string) $this->request->getPost('username')),
             'full_name' => trim((string) $this->request->getPost('full_name')),
             'avatar'    => $avatarToSave,
         ]);
+
+        // Unlink old avatar only after database update succeeds to avoid premature deletion
+        if ($updated && $newAvatar !== null && ! empty($user['avatar'])) {
+            $avatarManager->deleteAvatar($user['avatar']);
+        }
 
         return redirect()->to(site_url('users'))->with('message', 'User account updated successfully.');
     }
@@ -176,6 +170,7 @@ class Users extends BaseController
                     'max_size[avatar,2048]',
                 ],
                 'errors' => [
+                    'uploaded' => 'Please select a valid image file to upload.',
                     'is_image' => 'The avatar must be a valid image file.',
                     'mime_in'  => 'The avatar must be a JPG, JPEG, or PNG image.',
                     'max_size' => 'The avatar file size must not exceed 2 MB.',
