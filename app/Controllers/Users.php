@@ -54,9 +54,10 @@ class Users extends BaseController
 
     public function create(): RedirectResponse
     {
-        $rules = [
-            'full_name' => $this->userModel->getValidationRules()['full_name'],
-            'username'  => 'required|min_length[3]|max_length[50]|is_unique[users.username]',
+        $modelRules = $this->userModel->getValidationRules();
+        $rules      = [
+            'full_name' => $modelRules['full_name'],
+            'username'  => str_replace(',id,{id}', '', $modelRules['username']),
         ];
 
         $avatarFile = $this->request->getFile('avatar');
@@ -128,9 +129,10 @@ class Users extends BaseController
             throw PageNotFoundException::forPageNotFound("User #{$id} not found.");
         }
 
-        $rules = [
-            'full_name' => $this->userModel->getValidationRules()['full_name'],
-            'username'  => "required|min_length[3]|max_length[50]|is_unique[users.username,id,{$id}]",
+        $modelRules = $this->userModel->getValidationRules();
+        $rules      = [
+            'full_name' => $modelRules['full_name'],
+            'username'  => str_replace('{id}', (string) $id, $modelRules['username']),
         ];
 
         $avatarFile = $this->request->getFile('avatar');

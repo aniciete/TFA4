@@ -3,6 +3,7 @@
 namespace App\Libraries;
 
 use CodeIgniter\HTTP\Files\UploadedFile;
+use Throwable;
 
 class AvatarManager
 {
@@ -27,7 +28,7 @@ class AvatarManager
         }
 
         $newName       = $file->getRandomName();
-        $savedFilePath = $this->targetDir . DIRECTORY_SEPARATOR . $newName;
+        $savedFilePath = $this->getFilePath($newName);
 
         if (is_uploaded_file($file->getTempName())) {
             $file->move($this->targetDir, $newName);
@@ -37,10 +38,17 @@ class AvatarManager
         }
 
         // Resize image to display-ready 256x256 maximum maintaining aspect ratio
-        service('image')
-            ->withFile($savedFilePath)
-            ->resize(256, 256, true, 'auto')
-            ->save($savedFilePath);
+        try {
+            service('image')
+                ->withFile($savedFilePath)
+                ->resize(256, 256, true, 'auto')
+                ->save($savedFilePath);
+        } catch (Throwable $e) {
+            // Clean up partial/unresized file on image processing failure
+            @unlink($savedFilePath);
+
+            return null;
+        }
 
         return $newName;
     }
@@ -54,7 +62,7 @@ class AvatarManager
             return false;
         }
 
-        $filePath = $this->targetDir . DIRECTORY_SEPARATOR . basename($filename);
+        $filePath = $this->getFilePath($filename);
 
         if (is_file($filePath)) {
             return @unlink($filePath);
@@ -72,9 +80,7 @@ class AvatarManager
             return false;
         }
 
-        $filePath = $this->targetDir . DIRECTORY_SEPARATOR . basename($filename);
-
-        return is_file($filePath);
+        return is_file($this->getFilePath($filename));
     }
 
     /**
@@ -102,5 +108,12 @@ class AvatarManager
 
         return $user;
     }
-}
 
+    /**
+     * Build absolute filesystem path to an avatar image.
+     */
+    protected function getFilePath(string $filename): string
+    {
+        return $this->targetDir . DIRECTORY_SEPARATOR . basename($filename);
+    }
+}
