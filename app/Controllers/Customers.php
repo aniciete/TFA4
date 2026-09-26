@@ -44,24 +44,8 @@ class Customers extends BaseController
 
     public function create(): RedirectResponse
     {
-        $rules = [
-            'full_name' => 'required|min_length[2]|max_length[100]',
-            'email'     => 'required|max_length[100]|valid_email',
-            'phone'     => 'permit_empty|max_length[20]',
-        ];
-
-        $messages = [
-            'full_name' => [
-                'required'   => 'Full Name is required.',
-                'min_length' => 'Full Name must be at least 2 characters.',
-                'max_length' => 'Full Name cannot exceed 100 characters.',
-            ],
-            'email' => [
-                'required'    => 'Email address is required.',
-                'valid_email' => 'Please provide a valid email address.',
-                'max_length'  => 'Email address cannot exceed 100 characters.',
-            ],
-        ];
+        $rules    = $this->customerModel->getValidationRules();
+        $messages = $this->customerModel->getValidationMessages();
 
         if (! $this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
@@ -103,24 +87,8 @@ class Customers extends BaseController
             throw PageNotFoundException::forPageNotFound("Customer #{$id} not found.");
         }
 
-        $rules = [
-            'full_name' => 'required|min_length[2]|max_length[100]',
-            'email'     => 'required|max_length[100]|valid_email',
-            'phone'     => 'permit_empty|max_length[20]',
-        ];
-
-        $messages = [
-            'full_name' => [
-                'required'   => 'Full Name is required.',
-                'min_length' => 'Full Name must be at least 2 characters.',
-                'max_length' => 'Full Name cannot exceed 100 characters.',
-            ],
-            'email' => [
-                'required'    => 'Email address is required.',
-                'valid_email' => 'Please provide a valid email address.',
-                'max_length'  => 'Email address cannot exceed 100 characters.',
-            ],
-        ];
+        $rules    = $this->customerModel->getValidationRules();
+        $messages = $this->customerModel->getValidationMessages();
 
         if (! $this->validate($rules, $messages)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
