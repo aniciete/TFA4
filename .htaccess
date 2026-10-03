@@ -6,7 +6,7 @@
 </IfModule>
 
 # Protect sensitive files at root
-<FilesMatch "(^\.env|\.docx|\.dist\.xml|spark|composer\.(json|lock))">
+<FilesMatch "(^\.env|^env(?:\..*)?$|\.docx|\.dist\.xml|spark|composer\.(json|lock))">
     <IfModule authz_core_module>
         Require all denied
     </IfModule>
