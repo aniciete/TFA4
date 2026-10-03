@@ -2,10 +2,10 @@
 set -e
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TMP_DIR="/tmp/tfa3-deploy-$$"
-OUTPUT_ZIP="$DIR/tfa3-infinityfree.zip"
+TMP_DIR="/tmp/tfa4-deploy-$$"
+OUTPUT_ZIP="$DIR/tfa4-infinityfree.zip"
 
-echo "==> Packaging lean production build for InfinityFree (tfa3.freedev.app)..."
+echo "==> Packaging lean production build for InfinityFree (tfa4.freedev.app)..."
 rm -rf "$TMP_DIR" "$OUTPUT_ZIP"
 mkdir -p "$TMP_DIR"
 
@@ -16,7 +16,7 @@ rsync -av \
   --exclude="tests" \
   --exclude="build" \
   --exclude="webdes" \
-  --exclude="tfa3-pages" \
+  --exclude="tfa4-pages" \
   --exclude="*.docx" \
   --exclude="*.zip" \
   --exclude="build-infinityfree-zip.sh" \
@@ -51,7 +51,7 @@ rm -rf "$TMP_DIR"
 
 # Validate package integrity
 echo "==> Verifying package contents..."
-for req in "public/index.php" ".htaccess" "public/.htaccess" "vendor/autoload.php" ".env" "database/tfa3_pos.sql" "public/uploads/avatars/index.html" "public/assets/images/avatar-placeholder.svg"; do
+for req in "public/index.php" ".htaccess" "public/.htaccess" "vendor/autoload.php" ".env" "database/tfa4_pos.sql" "public/uploads/avatars/index.html" "public/assets/images/avatar-placeholder.svg"; do
     if ! unzip -l "$OUTPUT_ZIP" | grep -q "$req"; then
         echo "Error: Required file $req is missing from $OUTPUT_ZIP" >&2
         exit 1

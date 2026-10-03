@@ -31,7 +31,7 @@
 #--------------------------------------------------------------------
 
 # database.default.hostname = localhost
-# database.default.database = tfa3_pos
+# database.default.database = tfa4_pos
 # database.default.username = root
 # database.default.password =
 # database.default.DBDriver = MySQLi

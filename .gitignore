@@ -29,7 +29,7 @@ env.*
 *.docx
 *.doc
 *.pdf
-tfa3-pages/
+tfa4-pages/
 
 # Internal Planning & Development Notes
 *PLAN*.md
