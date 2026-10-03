@@ -7,7 +7,8 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
-use Tests\Support\Database\Seeds\Tfa3Seeder;
+use Tests\Support\AuthTestTrait;
+use Tests\Support\Database\Seeds\Tfa4Seeder;
 
 /**
  * @internal
@@ -16,8 +17,15 @@ final class UserWorkflowTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
     use FeatureTestTrait;
+    use AuthTestTrait;
 
-    protected $seed = Tfa3Seeder::class;
+    protected $seed = Tfa4Seeder::class;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->loginAsAdmin();
+    }
 
     protected function tearDown(): void
     {
@@ -87,6 +95,8 @@ final class UserWorkflowTest extends CIUnitTestCase
         $result = $this->post('users/new', [
             'username'  => 'sarah.connor',
             'full_name' => 'Sarah Connor',
+            'password'  => 'SarahPass!2026',
+            'password_confirm' => 'SarahPass!2026',
         ]);
 
         $result->assertRedirectTo(site_url('users'));
@@ -96,6 +106,7 @@ final class UserWorkflowTest extends CIUnitTestCase
         $this->assertNotNull($user);
         $this->assertSame('Sarah Connor', $user['full_name']);
         $this->assertNull($user['avatar']);
+        $this->assertTrue(password_verify('SarahPass!2026', $user['password']));
         $this->assertNotEmpty($user['created_at']);
     }
 
@@ -173,6 +184,8 @@ final class UserWorkflowTest extends CIUnitTestCase
         $result = $this->post('users/new', [
             'username'  => 'avatar.operator',
             'full_name' => 'Avatar Operator',
+            'password'  => 'AvatarPass!2026',
+            'password_confirm' => 'AvatarPass!2026',
         ]);
 
         $result->assertRedirectTo(site_url('users'));
@@ -223,6 +236,8 @@ final class UserWorkflowTest extends CIUnitTestCase
         $result = $this->post('users/new', [
             'username'  => 'text.user',
             'full_name' => 'Text File User',
+            'password'  => 'TextPass!2026',
+            'password_confirm' => 'TextPass!2026',
         ]);
 
         $result->assertRedirect();
@@ -255,6 +270,8 @@ final class UserWorkflowTest extends CIUnitTestCase
         $result = $this->post('users/new', [
             'username'  => 'huge.user',
             'full_name' => 'Huge File User',
+            'password'  => 'HugePass!2026',
+            'password_confirm' => 'HugePass!2026',
         ]);
 
         $result->assertRedirect();
@@ -378,4 +395,3 @@ final class UserWorkflowTest extends CIUnitTestCase
         @unlink($tmpImage);
     }
 }
-

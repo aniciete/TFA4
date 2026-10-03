@@ -6,7 +6,8 @@ use CodeIgniter\Exceptions\PageNotFoundException;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
 use CodeIgniter\Test\FeatureTestTrait;
-use Tests\Support\Database\Seeds\Tfa3Seeder;
+use Tests\Support\AuthTestTrait;
+use Tests\Support\Database\Seeds\Tfa4Seeder;
 
 /**
  * @internal
@@ -15,8 +16,15 @@ final class PosFoundationsTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
     use FeatureTestTrait;
+    use AuthTestTrait;
 
-    protected $seed = Tfa3Seeder::class;
+    protected $seed = Tfa4Seeder::class;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->loginAsAdmin();
+    }
 
     public function testHomePageReturnsOkAndDisplaysElements(): void
     {

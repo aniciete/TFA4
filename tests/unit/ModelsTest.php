@@ -6,7 +6,7 @@ use App\Models\CustomerModel;
 use App\Models\UserModel;
 use CodeIgniter\Test\CIUnitTestCase;
 use CodeIgniter\Test\DatabaseTestTrait;
-use Tests\Support\Database\Seeds\Tfa3Seeder;
+use Tests\Support\Database\Seeds\Tfa4Seeder;
 
 /**
  * @internal
@@ -15,7 +15,7 @@ final class ModelsTest extends CIUnitTestCase
 {
     use DatabaseTestTrait;
 
-    protected $seed = Tfa3Seeder::class;
+    protected $seed = Tfa4Seeder::class;
 
     public function testCustomerModelFindAllReturnsFiveRecordsWithSchemaFields(): void
     {
@@ -54,6 +54,7 @@ final class ModelsTest extends CIUnitTestCase
             $this->assertArrayHasKey('username', $user);
             $this->assertArrayHasKey('full_name', $user);
             $this->assertArrayHasKey('avatar', $user);
+            $this->assertArrayHasKey('password', $user);
             $this->assertArrayHasKey('created_at', $user);
             $this->assertArrayNotHasKey('role', $user);
         }
@@ -120,5 +121,4 @@ final class ModelsTest extends CIUnitTestCase
         $this->assertFalse($success);
     }
 }
-
 

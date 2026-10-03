@@ -4,7 +4,7 @@ namespace Tests\Support\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 
-class CreateTfa3Tables extends Migration
+class CreateTfa4Tables extends Migration
 {
     protected $DBGroup = 'tests';
 
@@ -46,6 +46,10 @@ class CreateTfa3Tables extends Migration
                 'type'       => 'VARCHAR',
                 'constraint' => 50,
                 'unique'     => true,
+            ],
+            'password' => [
+                'type'       => 'VARCHAR',
+                'constraint' => 255,
             ],
             'full_name' => [
                 'type'       => 'VARCHAR',

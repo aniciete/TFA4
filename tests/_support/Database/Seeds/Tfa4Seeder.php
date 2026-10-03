@@ -4,7 +4,7 @@ namespace Tests\Support\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
 
-class Tfa3Seeder extends Seeder
+class Tfa4Seeder extends Seeder
 {
     public function run(): void
     {
@@ -49,12 +49,14 @@ class Tfa3Seeder extends Seeder
             ],
         ];
 
+        $demoPassword = 'TFA4Demo!2026';
         $users = [
             [
                 'id'         => 1,
                 'username'   => 'admin.reyes',
                 'full_name'  => 'Carlos Reyes',
                 'avatar'     => null,
+                'password'   => password_hash($demoPassword, PASSWORD_DEFAULT),
                 'created_at' => '2026-01-15 08:00:00',
             ],
             [
@@ -62,6 +64,7 @@ class Tfa3Seeder extends Seeder
                 'username'   => 'mgr.castro',
                 'full_name'  => 'Beatriz Castro',
                 'avatar'     => null,
+                'password'   => password_hash($demoPassword, PASSWORD_DEFAULT),
                 'created_at' => '2026-01-20 08:30:00',
             ],
             [
@@ -69,6 +72,7 @@ class Tfa3Seeder extends Seeder
                 'username'   => 'cashier.valdez',
                 'full_name'  => 'Daniel Valdez',
                 'avatar'     => null,
+                'password'   => password_hash($demoPassword, PASSWORD_DEFAULT),
                 'created_at' => '2026-02-01 09:00:00',
             ],
             [
@@ -76,6 +80,7 @@ class Tfa3Seeder extends Seeder
                 'username'   => 'cashier.santos',
                 'full_name'  => 'Camille Santos',
                 'avatar'     => null,
+                'password'   => password_hash($demoPassword, PASSWORD_DEFAULT),
                 'created_at' => '2026-02-01 09:15:00',
             ],
             [
@@ -83,6 +88,7 @@ class Tfa3Seeder extends Seeder
                 'username'   => 'inv.navarro',
                 'full_name'  => 'Leo Navarro',
                 'avatar'     => null,
+                'password'   => password_hash($demoPassword, PASSWORD_DEFAULT),
                 'created_at' => '2026-02-10 10:00:00',
             ],
         ];
