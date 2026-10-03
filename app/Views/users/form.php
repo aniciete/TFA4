@@ -85,6 +85,50 @@
                 <?php endif; ?>
             </div>
 
+            <div class="form-group <?= isset($errors['password']) ? 'has-error' : '' ?>">
+                <label for="password" class="form-label">
+                    <span><?= $mode === 'create' ? 'Password' : 'New Password' ?></span>
+                    <?php if ($mode === 'create'): ?><span class="req-star" aria-hidden="true">*</span><?php else: ?><span class="optional-tag">(Optional)</span><?php endif; ?>
+                </label>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    class="form-input"
+                    autocomplete="new-password"
+                    <?= $mode === 'create' ? 'required' : '' ?>
+                    aria-describedby="<?= isset($errors['password']) ? 'password_error' : 'password_help' ?>"
+                >
+                <?php if (isset($errors['password'])): ?>
+                    <p id="password_error" class="field-error-msg"><?= esc($errors['password']) ?></p>
+                <?php else: ?>
+                    <p id="password_help" class="field-help-text">
+                        <?= $mode === 'create' ? 'Use at least 8 characters for the staff login credential.' : 'Leave empty to keep the current password.' ?>
+                    </p>
+                <?php endif; ?>
+            </div>
+
+            <div class="form-group <?= isset($errors['password_confirm']) ? 'has-error' : '' ?>">
+                <label for="password_confirm" class="form-label">
+                    <span>Confirm Password</span>
+                    <?php if ($mode === 'create'): ?><span class="req-star" aria-hidden="true">*</span><?php else: ?><span class="optional-tag">(Optional)</span><?php endif; ?>
+                </label>
+                <input
+                    type="password"
+                    id="password_confirm"
+                    name="password_confirm"
+                    class="form-input"
+                    autocomplete="new-password"
+                    <?= $mode === 'create' ? 'required' : '' ?>
+                    aria-describedby="<?= isset($errors['password_confirm']) ? 'password_confirm_error' : 'password_confirm_help' ?>"
+                >
+                <?php if (isset($errors['password_confirm'])): ?>
+                    <p id="password_confirm_error" class="field-error-msg"><?= esc($errors['password_confirm']) ?></p>
+                <?php else: ?>
+                    <p id="password_confirm_help" class="field-help-text">Repeat the password exactly.</p>
+                <?php endif; ?>
+            </div>
+
             <div class="form-group <?= isset($errors['avatar']) ? 'has-error' : '' ?>">
                 <label for="avatar" class="form-label">
                     <span>Profile Avatar</span>

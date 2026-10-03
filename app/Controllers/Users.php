@@ -24,6 +24,7 @@ class Users extends BaseController
 
         foreach ($users as &$user) {
             $user = $avatarManager->prepareUserAvatar($user);
+            unset($user['password']);
         }
         unset($user);
 
@@ -58,6 +59,23 @@ class Users extends BaseController
         $rules      = [
             'full_name' => $modelRules['full_name'],
             'username'  => str_replace(',id,{id}', '', $modelRules['username']),
+            'password'  => [
+                'label'  => 'Password',
+                'rules'  => 'required|min_length[8]|max_length[72]',
+                'errors' => [
+                    'required'   => 'Password is required for new user accounts.',
+                    'min_length' => 'Password must be at least 8 characters.',
+                    'max_length' => 'Password cannot exceed 72 characters.',
+                ],
+            ],
+            'password_confirm' => [
+                'label'  => 'Password Confirmation',
+                'rules'  => 'required|matches[password]',
+                'errors' => [
+                    'required' => 'Please confirm the password.',
+                    'matches'  => 'Password confirmation must match the password.',
+                ],
+            ],
         ];
 
         $avatarFile = $this->request->getFile('avatar');
@@ -81,6 +99,7 @@ class Users extends BaseController
                 'username'   => trim((string) $this->request->getPost('username')),
                 'full_name'  => trim((string) $this->request->getPost('full_name')),
                 'avatar'     => $avatarName,
+                'password'   => password_hash((string) $this->request->getPost('password'), PASSWORD_DEFAULT),
                 'created_at' => date('Y-m-d H:i:s'),
             ]);
         } catch (Throwable $e) {
@@ -110,6 +129,7 @@ class Users extends BaseController
         }
 
         $user = service('avatarManager')->prepareUserAvatar($user);
+        unset($user['password']);
 
         return view('users/form', [
             'title'      => 'Edit User Account | POS Database',
@@ -133,6 +153,21 @@ class Users extends BaseController
         $rules      = [
             'full_name' => $modelRules['full_name'],
             'username'  => str_replace('{id}', (string) $id, $modelRules['username']),
+            'password'  => [
+                'label'  => 'New Password',
+                'rules'  => 'permit_empty|min_length[8]|max_length[72]',
+                'errors' => [
+                    'min_length' => 'Password must be at least 8 characters.',
+                    'max_length' => 'Password cannot exceed 72 characters.',
+                ],
+            ],
+            'password_confirm' => [
+                'label'  => 'Password Confirmation',
+                'rules'  => 'permit_empty|matches[password]',
+                'errors' => [
+                    'matches' => 'Password confirmation must match the password.',
+                ],
+            ],
         ];
 
         $avatarFile = $this->request->getFile('avatar');
@@ -153,13 +188,19 @@ class Users extends BaseController
         }
 
         $avatarToSave = $newAvatar ?? $user['avatar'];
+        $password     = (string) $this->request->getPost('password');
+        $userData     = [
+            'username'  => trim((string) $this->request->getPost('username')),
+            'full_name' => trim((string) $this->request->getPost('full_name')),
+            'avatar'    => $avatarToSave,
+        ];
+
+        if ($password !== '') {
+            $userData['password'] = password_hash($password, PASSWORD_DEFAULT);
+        }
 
         try {
-            $updated = $this->userModel->update($id, [
-                'username'  => trim((string) $this->request->getPost('username')),
-                'full_name' => trim((string) $this->request->getPost('full_name')),
-                'avatar'    => $avatarToSave,
-            ]);
+            $updated = $this->userModel->update($id, $userData);
         } catch (Throwable $e) {
             if ($newAvatar) {
                 $avatarManager->deleteAvatar($newAvatar);
