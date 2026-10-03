@@ -1,7 +1,7 @@
 -- ====================================================================
--- IT0049 (Web System Technologies) - Technical Formative Assessment 3
+-- IT0049 (Web System Technologies) - Technical Formative Assessment 4
 -- Project: CodeIgniter 4 POS Database
--- Database Export: tfa3_pos.sql
+-- Database Export: tfa4_pos.sql
 -- ====================================================================
 
 -- --------------------------------------------------------
@@ -36,6 +36,7 @@ DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `username` VARCHAR(50) NOT NULL UNIQUE,
+  `password` VARCHAR(255) NOT NULL,
   `full_name` VARCHAR(100) NOT NULL,
   `avatar` VARCHAR(255) DEFAULT NULL,
   `created_at` DATETIME NOT NULL
@@ -45,9 +46,9 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 -- --------------------------------------------------------
 
-INSERT INTO `users` (`id`, `username`, `full_name`, `avatar`, `created_at`) VALUES
-(1, 'admin.reyes', 'Carlos Reyes', NULL, '2026-01-15 08:00:00'),
-(2, 'mgr.castro', 'Beatriz Castro', NULL, '2026-01-20 08:30:00'),
-(3, 'cashier.valdez', 'Daniel Valdez', NULL, '2026-02-01 09:00:00'),
-(4, 'cashier.santos', 'Camille Santos', NULL, '2026-02-01 09:15:00'),
-(5, 'inv.navarro', 'Leo Navarro', NULL, '2026-02-10 10:00:00');
+INSERT INTO `users` (`id`, `username`, `password`, `full_name`, `avatar`, `created_at`) VALUES
+(1, 'admin.reyes', '$2y$12$6jyqL7MfbiHhQBzC4x6hje2jmdXR.X4x2rrFpQb2yJFmjoqvF44JG', 'Carlos Reyes', NULL, '2026-01-15 08:00:00'),
+(2, 'mgr.castro', '$2y$12$QLMo6ouqaCiLisWmpjgBSex2T1lK0Sop4MJnckk/wMrKGV7MCmgg2', 'Beatriz Castro', NULL, '2026-01-20 08:30:00'),
+(3, 'cashier.valdez', '$2y$12$uIZQ31M9xd9N7wrZBNK10OypPSW5FXAwN23kXWqqnAkW8GZ5Riv4C', 'Daniel Valdez', NULL, '2026-02-01 09:00:00'),
+(4, 'cashier.santos', '$2y$12$IwkZzO7f7IWuOBZ9CG/xzemPNVvqIr/lfo7ZZz1r3GGw0hAjXR0iG', 'Camille Santos', NULL, '2026-02-01 09:15:00'),
+(5, 'inv.navarro', '$2y$12$srKxqmBx0R0YsyRFgey.nemD/gmkGidHVn4pSmmzyGeMJ2x11pJLm', 'Leo Navarro', NULL, '2026-02-10 10:00:00');

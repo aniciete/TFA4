@@ -16,6 +16,7 @@ class UserModel extends Model
         'username',
         'full_name',
         'avatar',
+        'password',
         'created_at',
     ];
 
@@ -33,6 +34,7 @@ class UserModel extends Model
         'full_name' => 'required|min_length[2]|max_length[100]',
         'username'  => 'required|min_length[3]|max_length[50]|is_unique[users.username,id,{id}]',
         'avatar'    => 'permit_empty|max_length[255]',
+        'password'  => 'permit_empty|max_length[255]',
     ];
 
     protected $validationMessages = [
@@ -46,6 +48,9 @@ class UserModel extends Model
             'min_length' => 'Username must be at least 3 characters.',
             'max_length' => 'Username cannot exceed 50 characters.',
             'is_unique'  => 'This username is already taken. Please choose another.',
+        ],
+        'password' => [
+            'max_length' => 'Password hash cannot exceed 255 characters.',
         ],
     ];
 
