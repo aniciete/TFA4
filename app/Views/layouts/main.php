@@ -64,6 +64,27 @@
                             <span class="nav-label">User Accounts</span>
                         </a>
                     </li>
+                    <?php if (session()->get('user_id') !== null): ?>
+                        <li class="nav-item">
+                            <span class="nav-link" aria-label="Signed in user">
+                                <span class="nav-num">AUTH</span>
+                                <span class="nav-label"><?= esc(session()->get('username')) ?></span>
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <form action="<?= esc(site_url('logout'), 'attr') ?>" method="post">
+                                <?= csrf_field() ?>
+                                <button type="submit" class="nav-link nav-button">Log Out</button>
+                            </form>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a href="<?= site_url('login') ?>" class="nav-link <?= ($activePage ?? '') === 'login' ? 'active' : '' ?>">
+                                <span class="nav-num">AUTH</span>
+                                <span class="nav-label">Staff Login</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>
