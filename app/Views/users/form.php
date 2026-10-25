@@ -3,13 +3,6 @@
 <?= $this->section('content') ?>
 <div class="form-page-container">
     <header class="section-header">
-        <div class="tag-row">
-            <span class="market-tag">Staff Directory &bull; <?= $mode === 'create' ? 'Personnel Setup' : 'Account Edit' ?></span>
-            <span class="status-indicator">
-                <span class="status-pip" aria-hidden="true"></span>
-                <span class="status-label"><?= $mode === 'create' ? 'New Operator' : 'User #' . esc($user['id']) ?></span>
-            </span>
-        </div>
         <h1 class="page-title"><?= $mode === 'create' ? 'New User Account' : 'Edit User Account' ?></h1>
         <p class="section-lead">
             <?= $mode === 'create'

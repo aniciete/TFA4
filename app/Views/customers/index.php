@@ -4,26 +4,12 @@
 <div class="directory-container">
     <header class="directory-header">
         <div class="header-main">
-            <div class="tag-row">
-                <span class="market-tag">Retail Directory</span>
-                <span class="status-indicator">
-                    <span class="status-pip" aria-hidden="true"></span>
-                    <span class="status-label">Active Directory</span>
-                </span>
-            </div>
             <h1 class="page-title">Customer Accounts</h1>
-            <p class="section-lead">Registered retail and commercial client profiles.</p>
+            <p class="section-lead">Registered retail and commercial client profiles. Total Records: <?= count($customers) ?>.</p>
             <div class="directory-actions-bar">
                 <a href="<?= esc(site_url('customers/new'), 'attr') ?>" class="button button-primary">
                     <span>+ New Customer</span>
                 </a>
-            </div>
-        </div>
-        <div class="overlapping-stat" aria-label="Customer summary count">
-            <span class="stat-giant" aria-hidden="true"><?= sprintf('%02d', count($customers)) ?></span>
-            <div class="stat-meta">
-                <span class="stat-label">Total Records</span>
-                <span class="stat-value"><?= count($customers) ?></span>
             </div>
         </div>
     </header>

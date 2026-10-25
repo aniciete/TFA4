@@ -35,41 +35,25 @@
                         <span class="brand-title">Database</span>
                     </span>
                 </a>
-                <span class="brand-docket" aria-hidden="true">Retail Operations</span>
             </div>
 
             <nav class="site-nav" aria-label="Main Navigation">
                 <ul class="nav-list" role="list">
                     <li class="nav-item">
-                        <a href="<?= site_url('/') ?>" class="nav-link <?= ($activePage ?? '') === 'home' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'home' ? 'aria-current="page"' : '' ?>>
-                            <span class="nav-num">01</span>
-                            <span class="nav-label">Home</span>
-                        </a>
+                        <a href="<?= site_url('/') ?>" class="nav-link <?= ($activePage ?? '') === 'home' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'home' ? 'aria-current="page"' : '' ?>>Home</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= site_url('about') ?>" class="nav-link <?= ($activePage ?? '') === 'about' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'about' ? 'aria-current="page"' : '' ?>>
-                            <span class="nav-num">02</span>
-                            <span class="nav-label">About</span>
-                        </a>
+                        <a href="<?= site_url('about') ?>" class="nav-link <?= ($activePage ?? '') === 'about' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'about' ? 'aria-current="page"' : '' ?>>About</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= site_url('customers') ?>" class="nav-link <?= ($activePage ?? '') === 'customers' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'customers' ? 'aria-current="page"' : '' ?>>
-                            <span class="nav-num">03</span>
-                            <span class="nav-label">Customer Accounts</span>
-                        </a>
+                        <a href="<?= site_url('customers') ?>" class="nav-link <?= ($activePage ?? '') === 'customers' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'customers' ? 'aria-current="page"' : '' ?>>Customer Accounts</a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?= site_url('users') ?>" class="nav-link <?= ($activePage ?? '') === 'users' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'users' ? 'aria-current="page"' : '' ?>>
-                            <span class="nav-num">04</span>
-                            <span class="nav-label">User Accounts</span>
-                        </a>
+                        <a href="<?= site_url('users') ?>" class="nav-link <?= ($activePage ?? '') === 'users' ? 'active' : '' ?>" <?= ($activePage ?? '') === 'users' ? 'aria-current="page"' : '' ?>>User Accounts</a>
                     </li>
                     <?php if (session()->get('user_id') !== null): ?>
                         <li class="nav-item">
-                            <span class="nav-link" aria-label="Signed in user">
-                                <span class="nav-num">AUTH</span>
-                                <span class="nav-label"><?= esc(session()->get('username')) ?></span>
-                            </span>
+                            <span class="nav-link nav-user" aria-label="Signed in user"><?= esc(session()->get('username')) ?></span>
                         </li>
                         <li class="nav-item">
                             <form action="<?= esc(site_url('logout'), 'attr') ?>" method="post">
@@ -79,10 +63,7 @@
                         </li>
                     <?php else: ?>
                         <li class="nav-item">
-                            <a href="<?= site_url('login') ?>" class="nav-link <?= ($activePage ?? '') === 'login' ? 'active' : '' ?>">
-                                <span class="nav-num">AUTH</span>
-                                <span class="nav-label">Staff Login</span>
-                            </a>
+                            <a href="<?= site_url('login') ?>" class="nav-link <?= ($activePage ?? '') === 'login' ? 'active' : '' ?>">Staff Login</a>
                         </li>
                     <?php endif; ?>
                 </ul>

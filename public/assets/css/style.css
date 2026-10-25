@@ -818,6 +818,93 @@ img, svg {
     gap: 2rem;
 }
 
+.flow-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.flow-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    background-color: var(--cream-surface);
+    border: 1px solid var(--cream-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1.5rem;
+}
+
+.flow-marker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--basil);
+    color: var(--cream-surface);
+    font-size: 0.875rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.flow-content {
+    flex: 1;
+}
+
+.flow-step-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--basil);
+    margin-bottom: 0.35rem;
+}
+
+.flow-step-text {
+    font-size: 0.9375rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.details-card {
+    background-color: var(--cream-surface);
+    border: 1px solid var(--cream-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+}
+
+.details-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.details-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.9375rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--cream-border);
+}
+
+.details-list li:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.details-list strong {
+    color: var(--basil);
+    min-width: 160px;
+}
+
+.details-list span {
+    color: var(--text-muted);
+}
+
 .section-header {
     margin-bottom: 0.5rem;
 }
@@ -1138,8 +1225,8 @@ img, svg {
 /* Open Ledger Data Table */
 .table-container.open-ledger {
     background-color: var(--cream-surface);
-    border-top: 3px solid var(--basil);
-    border-bottom: 3px solid var(--basil);
+    border-top: 2px solid var(--basil);
+    border-bottom: 2px solid var(--basil);
     border-left: none;
     border-right: none;
     border-radius: 0;
