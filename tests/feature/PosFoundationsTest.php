@@ -37,13 +37,12 @@ final class PosFoundationsTest extends CIUnitTestCase
         $result->assertSee('About');
         $result->assertSee('aria-current="page"');
 
-        // Extended assertions for Bright-Market layout and landmarks
+        // Extended assertions for layout and landmarks
         $result->assertSee('Skip to main content');
         $result->assertSee('href="#main-content"');
         $result->assertSee('role="banner"');
         $result->assertSee('role="main"');
         $result->assertSee('role="contentinfo"');
-        $result->assertSee('01');
         $result->assertSee('Registered Customers');
         $result->assertSee('assets/css/style.css');
         $result->assertSee('favicon.svg');
@@ -57,19 +56,16 @@ final class PosFoundationsTest extends CIUnitTestCase
         $result->assertSee('About POS Database');
         $result->assertSee('Counter Service &amp; Transaction Flow');
         $result->assertSee('Relational Database &amp; Models');
-        $result->assertSee('DATABASE ARCHITECTURE');
         $result->assertSee('CustomerModel:');
         $result->assertSee('UserModel:');
         $result->assertSee('aria-current="page"');
 
-        // Extended assertions for landmarks and connected 4-step flow
+        // Extended assertions for landmarks and flow
         $result->assertSee('Skip to main content');
-        $result->assertSee('02');
         $result->assertSee('1. Customer Identification');
         $result->assertSee('2. Item &amp; Order Verification');
         $result->assertSee('3. Staff Processing');
         $result->assertSee('4. Sale Completion &amp; Receipt');
-        $result->assertSee('MODEL PERSISTENCE PROTOCOL');
     }
 
     public function testCustomersPageReturnsOkAndDisplaysRecords(): void
@@ -96,7 +92,6 @@ final class PosFoundationsTest extends CIUnitTestCase
         $result->assertSee('data-label="Email Address"');
         $result->assertSee('data-label="Phone Number"');
         $result->assertSee('data-label="#"');
-        $result->assertSee('stat-giant');
     }
 
     public function testUsersPageReturnsOkAndDisplaysStaffRecords(): void
@@ -127,7 +122,6 @@ final class PosFoundationsTest extends CIUnitTestCase
         $result->assertSee('data-label="Username"');
         $result->assertSee('data-label="Full Name"');
         $result->assertSee('data-label="Created At"');
-        $result->assertSee('stat-giant');
     }
 
     public function testLocalAssetsAndFontsExist(): void

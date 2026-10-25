@@ -3,13 +3,6 @@
 <?= $this->section('content') ?>
 <div class="form-page-container">
     <header class="section-header">
-        <div class="tag-row">
-            <span class="market-tag">Retail Directory &bull; <?= $mode === 'create' ? 'Registration' : 'Profile Edit' ?></span>
-            <span class="status-indicator">
-                <span class="status-pip" aria-hidden="true"></span>
-                <span class="status-label"><?= $mode === 'create' ? 'New Record' : 'Record #' . esc($customer['id']) ?></span>
-            </span>
-        </div>
         <h1 class="page-title"><?= $mode === 'create' ? 'New Customer Account' : 'Edit Customer Account' ?></h1>
         <p class="section-lead">
             <?= $mode === 'create'

@@ -3,13 +3,6 @@
 <?= $this->section('content') ?>
 <div class="form-page-container auth-page-container">
     <header class="section-header">
-        <div class="tag-row">
-            <span class="market-tag">Store Operations &bull; Access Control</span>
-            <span class="status-indicator">
-                <span class="status-pip" aria-hidden="true"></span>
-                <span class="status-label">Staff Portal</span>
-            </span>
-        </div>
         <h1 class="page-title">Staff Login</h1>
         <p class="section-lead">Verify your staff credentials before opening customer and user account management.</p>
     </header>
